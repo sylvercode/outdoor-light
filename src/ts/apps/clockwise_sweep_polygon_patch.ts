@@ -1,7 +1,7 @@
 import type { LibWrapperBaseCallback, LibWrapperBaseCallbackArgs, LibWrapperWrapperDefinitions } from "fvtt-lib-wrapper-types";
 import type { Edge } from "fvtt-types/src/foundry/client/canvas/geometry/edges/_module.mjs";
 import { OutdoorWallFlagsDataModel } from "../data/outdoor_wall_flags";
-import { OutdoorLightFlagsDataModel } from "../data/outdoor_ligh_flags";
+import { OutdoorLightFlagsDataModel } from "../data/outdoor_light_flags";
 
 /**
  * LibWrapper patch definitions for ClockwiseSweepPolygon edge inclusion test logic.

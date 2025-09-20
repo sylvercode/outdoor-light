@@ -1,7 +1,7 @@
 import { HookDefinitions } from "fvtt-hook-attacher";
 import type ApplicationV2 from "fvtt-types/src/foundry/client/applications/api/application.mjs";
 import type { DataField } from "fvtt-types/src/foundry/common/data/fields.mjs";
-import { OutdoorLightFlagNames, OutdoorLightFlags, OutdoorLightFlagsDataModel } from "../data/outdoor_ligh_flags";
+import { OutdoorLightFlagNames, OutdoorLightFlags, OutdoorLightFlagsDataModel } from "../data/outdoor_light_flags";
 import AmbientLightConfig from "fvtt-types/src/foundry/client/applications/sheets/ambient-light-config.mjs";
 
 /**
@@ -35,7 +35,7 @@ async function renderAmbientLightConfig(
 
     const ConstrainedByWall = content.querySelector('div.form-group:has(input[name="walls"])');
     if (!ConstrainedByWall) {
-        console.error('Could not find div containing select[name="walls"]');
+        console.error('Could not find div containing input[name="walls"]');
         return;
     }
 

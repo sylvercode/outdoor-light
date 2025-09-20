@@ -3,9 +3,9 @@ import * as PingNotifier from "./apps/ping_notifer";
 import type { LibWrapperWrapperDefinitions } from "fvtt-lib-wrapper-types";
 import { HookDefinitions } from "fvtt-hook-attacher";
 import * as RenderWallConfigPatch from "./ui/render_wall_config_patch";
-import * as RenderAmbientLightConfigPatch from "./ui/reder_anbiant_lignt_config_patch";
+import * as RenderAmbientLightConfigPatch from "./ui/render_ambient_light_config_patch";
 import * as OutdoorWallFlagsDataModel from "./data/outdoor_wall_flags";
-import * as OutdoorLightFlagsDataModel from "./data/outdoor_ligh_flags";
+import * as OutdoorLightFlagsDataModel from "./data/outdoor_light_flags";
 import * as ClockwiseSweepPolygonPatch from "./apps/clockwise_sweep_polygon_patch";
 
 /**
