@@ -5,7 +5,20 @@
       "dogs": "Dogs",
       "fetch-random-dog": "Fetch random dog photo",
       "random-dog-alt": "Image of a random dog"
+    },
+    "OutdoorLightFlags": {
+      "FIELDS": {
+        "isOutdoor": {
+          "label": "Is Outdoor"
+        }
+      }
+    },
+    "OutdoorWallFlags": {
+      "FIELDS": {
+        "isBlockingOutdoorLight": {
+          "label": "Is Blocking Outdoor Light"
+        }
+      }
     }
   }
 }
-
