@@ -1,5 +1,3 @@
-import * as dogBrowserApp from "./apps/dog_browser";
-import * as PingNotifier from "./apps/ping_notifer";
 import type { LibWrapperWrapperDefinitions } from "fvtt-lib-wrapper-types";
 import { HookDefinitions } from "fvtt-hook-attacher";
 import * as RenderWallConfigPatch from "./ui/render_wall_config_patch";
@@ -14,7 +12,7 @@ import * as ClockwiseSweepPolygonPatch from "./apps/clockwise_sweep_polygon_patc
  */
 export interface OutdoorLightModule
 
-  extends foundry.packages.Module, dogBrowserApp.DogBrowserHandle {
+  extends foundry.packages.Module {
 
 }
 
@@ -31,14 +29,12 @@ export class OutdoorLightModuleHooks {
    * Iterable of callbacks to be called on module initialization.
    */
   static ON_INIT_MODULE_CALLBACKS: Iterable<OnInitModuleFunc> = [
-    dogBrowserApp.onInitHandle,
   ];
 
   /**
    * Iterable of libWrapper patch definitions to be registered.
    */
   static LIBWRAPPER_PATCHS: Iterable<LibWrapperWrapperDefinitions> = [
-    ...PingNotifier.LIBWRAPPER_PATCHS,
     ...ClockwiseSweepPolygonPatch.LIBWRAPPER_PATCHS,
   ];
 
@@ -46,7 +42,6 @@ export class OutdoorLightModuleHooks {
    * Set of hook definitions to be attached.
    */
   static HOOKS_DEFINITIONS_SET: Iterable<HookDefinitions> = [
-    ...dogBrowserApp.HOOKS_DEFINITIONS,
     ...WallDocumentHook.HOOKS_DEFINITIONS,
     ...RenderWallConfigPatch.HOOKS_DEFINITIONS,
     ...RenderAmbientLightConfigPatch.HOOKS_DEFINITIONS,
