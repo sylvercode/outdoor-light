@@ -3,7 +3,7 @@ import { OutdoorWallFlagNames } from "./outdoor_wall_flags";
 import { MODULE_ID } from "../constants";
 
 /**
- * Iterable of hook definitions for patching the AmbientLightConfig rendering.
+ * Iterable of hook definitions for patching the Wall Document.
  */
 export const HOOKS_DEFINITIONS: Iterable<HookDefinitions> = [{
     on: [{

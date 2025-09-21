@@ -46,7 +46,7 @@ function identifyEdges_Wrapper(this: ClockwiseSweepPolygon, wrapped: LibWrapperB
 }
 
 /**
- * Change edge sense restrictions for for outdoor walls.
+ * Change edge sense restrictions for outdoor walls.
  * @param csp The ClockwiseSweepPolygon instance.
  */
 function identifyEdges(csp: ClockwiseSweepPolygon): void {

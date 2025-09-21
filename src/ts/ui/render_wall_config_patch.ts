@@ -1,6 +1,7 @@
 import { HookDefinitions } from "fvtt-hook-attacher";
 import type ApplicationV2 from "fvtt-types/src/foundry/client/applications/api/application.mjs";
 import type { DataField } from "fvtt-types/src/foundry/common/data/fields.mjs";
+import WallConfig from "fvtt-types/src/foundry/client/applications/sheets/wall-config.mjs";
 import { OutdoorWallFlagNames, OutdoorWallFlags, OutdoorWallFlagsDataModel } from "../data/outdoor_wall_flags";
 
 /**
