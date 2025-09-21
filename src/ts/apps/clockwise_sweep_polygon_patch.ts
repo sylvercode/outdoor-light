@@ -11,6 +11,11 @@ export const LIBWRAPPER_PATCHS: Iterable<LibWrapperWrapperDefinitions> = [
         target: "foundry.canvas.geometry.ClockwiseSweepPolygon.prototype._testEdgeInclusion",
         fn: testEdgeInclusion_Wrapper,
         type: "WRAPPER"
+    },
+    {
+        target: "foundry.canvas.geometry.ClockwiseSweepPolygon.prototype._identifyEdges",
+        fn: identifyEdges_Wrapper,
+        type: "WRAPPER"
     }
 ];
 
@@ -28,6 +33,33 @@ function testEdgeInclusion_Wrapper(this: ClockwiseSweepPolygon, wrapped: LibWrap
 }
 
 /**
+ * Wrapper for the _identifyEdges method to inject behavior after edge identification.
+ * @param this The ClockwiseSweepPolygon instance
+ * @param wrapped The base wrapped function
+ * @param args The arguments of the wrapped function
+ * @returns The result of the wrapped function
+ */
+function identifyEdges_Wrapper(this: ClockwiseSweepPolygon, wrapped: LibWrapperBaseCallback, ...args: LibWrapperBaseCallbackArgs): any {
+    const result = wrapped.apply(this, args);
+    identifyEdges(this);
+    return result;
+}
+
+/**
+ * Change edge sense restrictions for for outdoor walls.
+ * @param csp The ClockwiseSweepPolygon instance.
+ */
+function identifyEdges(csp: ClockwiseSweepPolygon): void {
+    if (!isOutdoorLight(csp))
+        return;
+
+    for (const edge of csp.edges) {
+        if (isOutdoorBorder(edge))
+            applyOutdoorWallSenseRestriction(edge);
+    }
+}
+
+/**
  * Returns a possibly modified Edge for testing, depending on outdoor light and border status.
  * @param csp The ClockwiseSweepPolygon instance
  * @param edge The edge to test
@@ -38,8 +70,13 @@ function getTestEdge(csp: ClockwiseSweepPolygon, edge: Edge): Edge {
         return edge;
 
     const clonedEdge = edge.clone();
-    clonedEdge.light = CONST.WALL_SENSE_TYPES.NORMAL;
+    applyOutdoorWallSenseRestriction(clonedEdge);
     return clonedEdge;
+}
+
+function applyOutdoorWallSenseRestriction(edge: Edge): void {
+    edge.light = CONST.WALL_SENSE_TYPES.NORMAL;
+    edge.threshold = undefined;
 }
 
 /**
