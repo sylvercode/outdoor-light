@@ -6,6 +6,7 @@ import * as WallDocumentHook from "./data/wall_document_hook";
 import * as OutdoorWallFlagsDataModel from "./data/outdoor_wall_flags";
 import * as OutdoorLightFlagsDataModel from "./data/outdoor_light_flags";
 import * as ClockwiseSweepPolygonPatch from "./apps/clockwise_sweep_polygon_patch";
+import * as GetSceneControlButtonsHook from "./ui/get_scene_control_buttons.hook";
 
 /**
  * Interface for the Outdoor Light module, extending Foundry's Module interface.
@@ -47,5 +48,6 @@ export class OutdoorLightModuleHooks {
     ...RenderAmbientLightConfigPatch.HOOKS_DEFINITIONS,
     ...OutdoorWallFlagsDataModel.HOOKS_DEFINITIONS,
     ...OutdoorLightFlagsDataModel.HOOKS_DEFINITIONS,
+    ...GetSceneControlButtonsHook.HOOKS_DEFINITIONS,
   ]
 }

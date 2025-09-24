@@ -13,6 +13,9 @@
           "label": "Is Blocking Outdoor Light"
         }
       }
+    },
+    "wallSceneControlButtons": {
+      "toggleOutdoorWalls": "Toggle Outdoor Walls"
     }
   }
 }
