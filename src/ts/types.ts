@@ -6,6 +6,8 @@ import * as WallDocumentHook from "./data/wall_document_hook";
 import * as OutdoorWallFlagsDataModel from "./data/outdoor_wall_flags";
 import * as OutdoorLightFlagsDataModel from "./data/outdoor_light_flags";
 import * as ClockwiseSweepPolygonPatch from "./apps/clockwise_sweep_polygon_patch";
+import * as LightingLayerTools from "./ui/lighting_layer_tools";
+import * as WallsLayerTools from "./ui/walls_layer_tools";
 
 /**
  * Interface for the Outdoor Light module, extending Foundry's Module interface.
@@ -36,6 +38,8 @@ export class OutdoorLightModuleHooks {
    */
   static LIBWRAPPER_PATCHS: Iterable<LibWrapperWrapperDefinitions> = [
     ...ClockwiseSweepPolygonPatch.LIBWRAPPER_PATCHS,
+    ...WallsLayerTools.LIBWRAPPER_PATCHS,
+    ...LightingLayerTools.LIBWRAPPER_PATCHS,
   ];
 
   /**
@@ -47,5 +51,7 @@ export class OutdoorLightModuleHooks {
     ...RenderAmbientLightConfigPatch.HOOKS_DEFINITIONS,
     ...OutdoorWallFlagsDataModel.HOOKS_DEFINITIONS,
     ...OutdoorLightFlagsDataModel.HOOKS_DEFINITIONS,
+    ...WallsLayerTools.HOOKS_DEFINITIONS,
+    ...LightingLayerTools.HOOKS_DEFINITIONS,
   ]
 }

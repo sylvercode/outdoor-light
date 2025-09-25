@@ -13,6 +13,14 @@
           "label": "Is Blocking Outdoor Light"
         }
       }
+    },
+    "SceneControl": {
+      "walls": {
+        "toggleOutdoorWalls": "Toggle Outdoor Walls"
+      },
+      "lighting": {
+        "toggleIsOutdoorLight": "Toggle Is Outdoor"
+      }
     }
   }
 }

@@ -4,15 +4,15 @@
   "description": "Add outdoor lights and walls to Foundry VTT.",
   "private": true,
   "scripts": {
-    "build": "tsc && vite build",
-    "watch": "tsc && vite build --watch"
+    "build": "vite build --mode development",
+    "watch": "vite build --watch"
   },
   "devDependencies": {
     "fvtt-types": "github:League-of-Foundry-Developers/foundry-vtt-types#main",
     "rollup-plugin-copy": "^3.5.0",
     "sass": "^1.89.2",
     "typescript": "^5.8.3",
-    "vite": "^7.0.4"
+    "vite": "^7.0.4",
+    "vite-tsconfig-paths": "^5.1.4"
   }
 }
-

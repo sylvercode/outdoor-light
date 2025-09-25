@@ -40,5 +40,10 @@
   "include": [
     "src",
     "libs"
+  ],
+  "exclude": [
+    "dist",
+    "foundry",
+    "node_modules"
   ]
 }
