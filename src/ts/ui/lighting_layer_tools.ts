@@ -74,8 +74,8 @@ function getSceneControlButtons(controls: Record<string, SceneControls.Control>)
 }
 
 /**
- * Logic to set the outdoor wall flag when a new wall is created with the outdoor walls tool active.
- * @param event The pointer event for the wall creation.
+ * Logic to set the outdoor light flag when a new light is created with the outdoor lights tool active.
+ * @param event The pointer event for the light creation.
  */
 function LightingLayer_onDragLeftDrop(event: Canvas.Event.Pointer<AmbientLight>): void {
     const lightDoc = event.interactionData.preview?.document;

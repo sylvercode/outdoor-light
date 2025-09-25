@@ -91,6 +91,7 @@ function WallsLayer_onDragLeftDrop(event: Canvas.Event.Pointer<Wall>): void {
     if (!toggleOutdoorWallsTool)
         return;
 
+    // Use foundry use the _source to create the document, so we need to set the flag there.
     const outdoorFlags = wallDoc._source.flags[MODULE_ID] ??= {};
     outdoorFlags.isBlockingOutdoorLight = true;
 }
