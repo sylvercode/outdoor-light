@@ -37,6 +37,7 @@ export class OutdoorLightModuleHooks {
    */
   static LIBWRAPPER_PATCHS: Iterable<LibWrapperWrapperDefinitions> = [
     ...ClockwiseSweepPolygonPatch.LIBWRAPPER_PATCHS,
+    ...GetSceneControlButtonsHook.LIBWRAPPER_PATCHS,
   ];
 
   /**
