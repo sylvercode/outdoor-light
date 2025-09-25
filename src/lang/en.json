@@ -14,8 +14,13 @@
         }
       }
     },
-    "wallSceneControlButtons": {
-      "toggleOutdoorWalls": "Toggle Outdoor Walls"
+    "SceneControl": {
+      "walls": {
+        "toggleOutdoorWalls": "Toggle Outdoor Walls"
+      },
+      "lighting": {
+        "toggleIsOutdoorLight": "Toggle Is Outdoor"
+      }
     }
   }
 }
