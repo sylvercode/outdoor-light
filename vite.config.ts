@@ -2,6 +2,7 @@ import path from "node:path";
 import * as fsPromises from "fs/promises";
 import copy from "rollup-plugin-copy";
 import { defineConfig, Plugin } from "vite";
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 const moduleVersion = process.env.MODULE_VERSION;
 const githubProject = process.env.GH_PROJECT;
@@ -9,7 +10,7 @@ const githubTag = process.env.GH_TAG;
 
 console.log(process.env.VSCODE_INJECTION);
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "fvtt-hook-attacher": path.resolve(process.cwd(), "libs/fvtt-hook-attacher/index.ts"),
@@ -17,6 +18,7 @@ export default defineConfig({
   },
   build: {
     sourcemap: true,
+    minify: mode === "development" ? false : undefined,
     rollupOptions: {
       input: "src/ts/module.ts",
       output: {
@@ -27,6 +29,9 @@ export default defineConfig({
     },
   },
   plugins: [
+    tsconfigPaths({
+      projects: [mode === "development" ? "tsconfig.dev.json" : "tsconfig.json"]
+    }),
     updateModuleManifestPlugin(),
     copy({
       targets: [
@@ -43,7 +48,7 @@ export default defineConfig({
       hook: "writeBundle",
     }),
   ],
-});
+}));
 
 function updateModuleManifestPlugin(): Plugin {
   return {
