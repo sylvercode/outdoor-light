@@ -3,7 +3,7 @@ import type { HookDefinitions } from "fvtt-hook-attacher";
 import { DataSchema, StringField } from "fvtt-types/src/foundry/common/data/fields.mjs";
 
 /**
- * Enum for scene flag names related to outdoor blocking wall.
+ * Enum for scene flag names related to outdoor scene light modes.
  */
 export enum OutdoorSceneFlagNames {
     outdoorLightMode = "outdoorLightMode",
@@ -56,7 +56,7 @@ interface OutdoorSceneFlagsSchema extends DataSchema {
 }
 
 /**
- * Data model for scene flags related to outdoor blocking wall.
+ * Data model for scene flags related to outdoor scene light modes.
  */
 export class OutdoorSceneFlagsDataModel extends foundry.abstract.DataModel<OutdoorSceneFlagsSchema> {
     /**
@@ -72,7 +72,7 @@ export class OutdoorSceneFlagsDataModel extends foundry.abstract.DataModel<Outdo
     }
 
     /**
-     * Constructs a new OutdoorSceneFlagsDataModel for a given wall document.
+     * Constructs a new OutdoorSceneFlagsDataModel for a given scene document.
      * @param sceneDocument The scene document to use for the data model.
      */
     constructor(sceneDocument: Scene) {
