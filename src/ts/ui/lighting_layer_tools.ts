@@ -3,6 +3,7 @@ import { LibWrapperBaseCallback, LibWrapperBaseCallbackArgs, LibWrapperWrapperDe
 import type SceneControls from "fvtt-types/src/foundry/client/applications/ui/scene-controls.mjs";
 import { MODULE_ID, UPPER_MODULE_ID } from "../constants";
 import { getToolOrderInsertionSequence } from "../utils/SceneControlsUtils";
+import { OutdoorLightModes, OutdoorSceneFlagsDataModel } from "../data/outdoor_scene_flags";
 
 /**
  * Iterable of hook definitions for tools addition.
@@ -93,4 +94,16 @@ function LightingLayer_onDragLeftDrop(event: Canvas.Event.Pointer<AmbientLight>)
 
     const outdoorFlags = lightDoc.flags[MODULE_ID] ??= {};
     outdoorFlags.isOutdoor = true;
+
+    const scene = lightDoc.parent;
+    if (scene == null)
+        return;
+
+    const outdoorSceneFlags = new OutdoorSceneFlagsDataModel(scene);
+    if (outdoorSceneFlags.outdoorLightMode !== OutdoorLightModes.manualGlobalLight)
+        return;
+
+    const sceneMaxDarkness = scene.environment.globalLight.darkness.max;
+    if (sceneMaxDarkness !== undefined)
+        lightDoc.config.darkness.max = sceneMaxDarkness;
 }

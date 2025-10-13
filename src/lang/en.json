@@ -14,6 +14,18 @@
         }
       }
     },
+    "OutdoorSceneFlags": {
+      "FIELDS": {
+        "outdoorLightMode": {
+          "label": "Outdoor Light Mode",
+          "hint": "Determines how outdoor light is handled in this scene and set relevant settings accordingly. See module documentation for details."
+        }
+      }
+    },
+    "outdoorLightModes": {
+      "manualGlobalLight": "Manual Global Light",
+      "globalDarkness": "Global Darkness"
+    },
     "SceneControl": {
       "walls": {
         "toggleOutdoorWalls": "Toggle Outdoor Walls"
