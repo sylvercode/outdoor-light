@@ -2,9 +2,11 @@ import type { LibWrapperWrapperDefinitions } from "fvtt-lib-wrapper-types";
 import { HookDefinitions } from "fvtt-hook-attacher";
 import * as RenderWallConfigPatch from "./ui/render_wall_config_patch";
 import * as RenderAmbientLightConfigPatch from "./ui/render_ambient_light_config_patch";
+import * as RenderSceneConfigPatch from "./ui/render_scene_config_patch";
 import * as WallDocumentHook from "./data/wall_document_hook";
-import * as OutdoorWallFlagsDataModel from "./data/outdoor_wall_flags";
 import * as OutdoorLightFlagsDataModel from "./data/outdoor_light_flags";
+import * as OutdoorWallFlagsDataModel from "./data/outdoor_wall_flags";
+import * as OutdoorSceneFlagsDataModel from "./data/outdoor_scene_flags";
 import * as ClockwiseSweepPolygonPatch from "./apps/clockwise_sweep_polygon_patch";
 import * as LightingLayerTools from "./ui/lighting_layer_tools";
 import * as WallsLayerTools from "./ui/walls_layer_tools";
@@ -49,8 +51,10 @@ export class OutdoorLightModuleHooks {
     ...WallDocumentHook.HOOKS_DEFINITIONS,
     ...RenderWallConfigPatch.HOOKS_DEFINITIONS,
     ...RenderAmbientLightConfigPatch.HOOKS_DEFINITIONS,
+    ...RenderSceneConfigPatch.HOOKS_DEFINITIONS,
     ...OutdoorWallFlagsDataModel.HOOKS_DEFINITIONS,
     ...OutdoorLightFlagsDataModel.HOOKS_DEFINITIONS,
+    ...OutdoorSceneFlagsDataModel.HOOKS_DEFINITIONS,
     ...WallsLayerTools.HOOKS_DEFINITIONS,
     ...LightingLayerTools.HOOKS_DEFINITIONS,
   ]
