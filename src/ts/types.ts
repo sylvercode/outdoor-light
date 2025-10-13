@@ -4,6 +4,7 @@ import * as RenderWallConfigPatch from "./ui/render_wall_config_patch";
 import * as RenderAmbientLightConfigPatch from "./ui/render_ambient_light_config_patch";
 import * as RenderSceneConfigPatch from "./ui/render_scene_config_patch";
 import * as WallDocumentHook from "./data/wall_document_hook";
+import * as SceneDocumentHook from "./data/scene_document_hook";
 import * as OutdoorLightFlagsDataModel from "./data/outdoor_light_flags";
 import * as OutdoorWallFlagsDataModel from "./data/outdoor_wall_flags";
 import * as OutdoorSceneFlagsDataModel from "./data/outdoor_scene_flags";
@@ -49,6 +50,7 @@ export class OutdoorLightModuleHooks {
    */
   static HOOKS_DEFINITIONS_SET: Iterable<HookDefinitions> = [
     ...WallDocumentHook.HOOKS_DEFINITIONS,
+    ...SceneDocumentHook.HOOKS_DEFINITIONS,
     ...RenderWallConfigPatch.HOOKS_DEFINITIONS,
     ...RenderAmbientLightConfigPatch.HOOKS_DEFINITIONS,
     ...RenderSceneConfigPatch.HOOKS_DEFINITIONS,

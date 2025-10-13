@@ -51,4 +51,25 @@ async function renderAmbientLightConfig(
 
     const isOutdoorFieldGroup = toFormGroup(OutdoorLightFlagNames.isOutdoor);
     ConstrainedByWall.after(isOutdoorFieldGroup);
+
+    const isOutdoorFieldInput = isOutdoorFieldGroup.querySelector("input") as HTMLInputElement | null;
+    if (!isOutdoorFieldInput) {
+        console.error(`Could not find input for ${OutdoorLightFlagNames.isOutdoor}`);
+        return;
+    }
+
+    isOutdoorFieldInput.addEventListener("change", async () => {
+        if (!isOutdoorFieldInput.checked
+            || context.document.parent === null
+        )
+            return;
+
+        const maxDarknessInput = content.querySelector('input[name="config.darkness.max"]') as HTMLInputElement | null;
+        if (!maxDarknessInput) {
+            console.error('Could not find input[name="config.darkness.max"]');
+            return;
+        }
+
+        maxDarknessInput.value = String(context.document.parent.environment.globalLight.darkness.max);
+    });
 }

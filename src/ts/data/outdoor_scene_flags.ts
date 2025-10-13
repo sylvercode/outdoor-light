@@ -68,9 +68,6 @@ export class OutdoorSceneFlagsDataModel extends foundry.abstract.DataModel<Outdo
      * Initializes i18n for this data model.
      */
     static i18nInit() {
-        for (const key of Object.keys(OutdoorLightModes) as OutdoorLightMode[]) {
-            OutdoorLightModesField.Options.choices[key] = game.i18n!.localize(`${UPPER_MODULE_ID}.outdoorLightModes.${key}`);
-        }
         foundry.helpers.Localization.localizeDataModel(OutdoorSceneFlagsDataModel);
     }
 
