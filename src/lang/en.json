@@ -19,12 +19,21 @@
         "outdoorLightMode": {
           "label": "Outdoor Light Mode",
           "hint": "Determines how outdoor light is handled in this scene and set relevant settings accordingly. See module documentation for details."
+        },
+        "outdoorLightStatus": {
+          "label": "Outdoor Light Status",
+          "hint": "Controls the brightness of new outdoor light sources. When changed, it updates existing ones accordingly."
         }
       }
     },
     "outdoorLightModes": {
       "manualGlobalLight": "Manual Global Light",
       "globalDarkness": "Global Darkness"
+    },
+    "outdoorLightStatus": {
+      "off": "Off",
+      "dim": "Dim",
+      "bright": "Bright"
     },
     "SceneControl": {
       "walls": {

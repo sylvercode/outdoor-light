@@ -1,5 +1,5 @@
 import { HookDefinitions } from "fvtt-hook-attacher";
-import { OutdoorLightModes, OutdoorSceneFlagsDataModel } from "./outdoor_scene_flags";
+import { OutdoorLightMode, OutdoorSceneFlagsDataModel } from "./outdoor_scene_flags";
 import { OutdoorLightFlagsDataModel } from "./outdoor_light_flags";
 
 /**
@@ -23,7 +23,7 @@ function updateScene(
         return;
 
     const sceneOutdoorFlag = new OutdoorSceneFlagsDataModel(scene);
-    if (sceneOutdoorFlag.outdoorLightMode !== OutdoorLightModes.manualGlobalLight)
+    if (sceneOutdoorFlag.outdoorLightMode !== OutdoorLightMode.manualGlobalLight)
         return;
 
     scene.lights.forEach(light => {
