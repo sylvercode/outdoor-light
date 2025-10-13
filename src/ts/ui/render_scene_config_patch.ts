@@ -2,7 +2,7 @@ import { HookDefinitions } from "fvtt-hook-attacher";
 import type ApplicationV2 from "fvtt-types/src/foundry/client/applications/api/application.mjs";
 import type { DataField } from "fvtt-types/src/foundry/common/data/fields.mjs";
 import type SceneConfig from "fvtt-types/src/foundry/client/applications/sheets/scene-config.mjs";
-import { OutdoorLightModes, OutdoorSceneFlagNames, OutdoorSceneFlags, OutdoorSceneFlagsDataModel } from "../data/outdoor_scene_flags";
+import { OutdoorLightMode, OutdoorSceneFlagNames, OutdoorSceneFlags, OutdoorSceneFlagsDataModel } from "../data/outdoor_scene_flags";
 
 /**
  * Iterable of hook definitions for patching the SceneConfig rendering.
@@ -71,7 +71,7 @@ async function renderSceneConfig(
 
         globalIlluminationCheck.checked = false;
 
-        if (value === OutdoorLightModes.globalDarkness) {
+        if (value === OutdoorLightMode.globalDarkness) {
             const darknessLevelInput = content.querySelector('range-picker[name="environment.darknessLevel"]') as HTMLInputElement | null;
             if (darknessLevelInput === null) {
                 console.error('Could not find range-picker[name="environment.darknessLevel"]');
@@ -88,4 +88,7 @@ async function renderSceneConfig(
                 lockDarknessCheck.click();
         }
     });
+
+    const outdoorLightStatusFieldGroup = toFormGroup(OutdoorSceneFlagNames.outdoorLightStatus);
+    outdoorLightModeFieldGroup.after(outdoorLightStatusFieldGroup);
 }
