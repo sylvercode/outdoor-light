@@ -1,4 +1,4 @@
-import { OutdoorLightMode, OutdoorLightStatus, OutdoorSceneFlagsDataModel } from "../data/outdoor_scene_flags";
+import { OutdoorLightMode, OutdoorLightStatus, OutdoorSceneFlagsDataModel } from "../data/scene_ext";
 import { AmbientLightProxy } from "../proxies/ambient_light_proxy";
 
 /**

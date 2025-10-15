@@ -13,7 +13,7 @@ type SequenceGenerator = () => number;
  * @param tailToolNames The names of the tools that should remain at the end of the list.
  * @returns A sequence generator function.
  */
-export function getToolOrderInsertionSequence(tools: Record<string, SceneControls.Tool>, tailToolNames: string[] = []): SequenceGenerator {
+export default function getToolOrderInsertionSequence(tools: Record<string, SceneControls.Tool>, tailToolNames: string[] = []): SequenceGenerator {
     let lastIndex = -1;
     let tailToolIndex = -1;
     for (const toolKey of Object.keys(tools)) {

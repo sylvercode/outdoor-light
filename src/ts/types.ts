@@ -1,16 +1,14 @@
 import type { LibWrapperWrapperDefinitions } from "fvtt-lib-wrapper-types";
 import { HookDefinitions } from "fvtt-hook-attacher";
-import * as RenderWallConfigPatch from "./ui/render_wall_config_patch";
-import * as RenderAmbientLightConfigPatch from "./ui/render_ambient_light_config_patch";
-import * as RenderSceneConfigPatch from "./ui/render_scene_config_patch";
-import * as WallDocumentHook from "./data/wall_document_hook";
-import * as SceneDocumentHook from "./data/scene_document_hook";
-import * as OutdoorLightFlagsDataModel from "./data/outdoor_light_flags";
-import * as OutdoorWallFlagsDataModel from "./data/outdoor_wall_flags";
-import * as OutdoorSceneFlagsDataModel from "./data/outdoor_scene_flags";
-import * as ClockwiseSweepPolygonPatch from "./apps/clockwise_sweep_polygon_patch";
-import * as LightingLayerTools from "./ui/lighting_layer_tools";
-import * as WallsLayerTools from "./ui/walls_layer_tools";
+import * as RenderWallConfigPatch from "./ui/dialog/wall_config_ext";
+import * as RenderAmbientLightConfigPatch from "./ui/dialog/ambient_light_config_ext";
+import * as RenderSceneConfigPatch from "./ui/dialog/scene_config_ext";
+import * as OutdoorLightFlagsDataModel from "./data/ambient_light_ext";
+import * as OutdoorWallFlagsDataModel from "./data/wall_ext";
+import * as OutdoorSceneFlagsDataModel from "./data/scene_ext";
+import * as ClockwiseSweepPolygonPatch from "./apps/clockwise_sweep_polygon_ext";
+import * as LightingLayerTools from "./ui/tools/lighting_layer_tools_ext";
+import * as WallsLayerTools from "./ui/tools/walls_layer_tools_ext";
 
 /**
  * Interface for the Outdoor Light module, extending Foundry's Module interface.
@@ -49,8 +47,6 @@ export class OutdoorLightModuleHooks {
    * Set of hook definitions to be attached.
    */
   static HOOKS_DEFINITIONS_SET: Iterable<HookDefinitions> = [
-    ...WallDocumentHook.HOOKS_DEFINITIONS,
-    ...SceneDocumentHook.HOOKS_DEFINITIONS,
     ...RenderWallConfigPatch.HOOKS_DEFINITIONS,
     ...RenderAmbientLightConfigPatch.HOOKS_DEFINITIONS,
     ...RenderSceneConfigPatch.HOOKS_DEFINITIONS,

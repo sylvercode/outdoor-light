@@ -68,11 +68,41 @@ export class OutdoorWallFlagsDataModel extends foundry.abstract.DataModel<Outdoo
 }
 
 /**
+ * Callback for the updateWall hook, triggers a refresh of the lighting and vision system if the outdoor blocking wall flag changes.
+ * @param _document The wall document being updated.
+ * @param change The changes being applied to the wall document.
+ * @param _options The update options.
+ * @param _userId The ID of the user performing the update.
+ */
+function updateWall(
+    _document: WallDocument,
+    change: WallDocument.UpdateData,
+    _options: WallDocument.Database.UpdateOptions,
+    _userId: string,
+): void {
+    if (change.flags?.[MODULE_ID]?.[OutdoorWallFlagNames.isBlockingOutdoorLight] === undefined)
+        return;
+
+    game.canvas?.perception.update({
+        refreshEdges: true,         // Recompute edge intersections
+        initializeLighting: true,   // Recompute light sources
+        initializeVision: true,     // Recompute vision sources
+        initializeSounds: true      // Recompute sound sources
+    });
+}
+
+/**
  * Iterable of hook definitions for this data model.
  */
 export const HOOKS_DEFINITIONS: Iterable<HookDefinitions> = [{
-    on: [{
-        name: "i18nInit",
-        callback: OutdoorWallFlagsDataModel.i18nInit
-    }]
+    on: [
+        {
+            name: "i18nInit",
+            callback: OutdoorWallFlagsDataModel.i18nInit
+        },
+        {
+            name: "updateWall",
+            callback: updateWall
+        }
+    ]
 }];

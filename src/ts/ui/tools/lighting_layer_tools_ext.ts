@@ -1,10 +1,10 @@
 import { HookDefinitions } from "fvtt-hook-attacher";
 import { LibWrapperBaseCallback, LibWrapperBaseCallbackArgs, LibWrapperWrapperDefinitions } from "fvtt-lib-wrapper-types";
 import type SceneControls from "fvtt-types/src/foundry/client/applications/ui/scene-controls.mjs";
-import { MODULE_ID, UPPER_MODULE_ID } from "../constants";
-import { getToolOrderInsertionSequence } from "../utils/scene_controls_utils";
-import { AmbientLightProxy } from "../proxies/ambient_light_proxy";
-import applyDefaultOutdoorLightSettings from "../apps/apply_default_outdoor_light_settings";
+import { MODULE_ID, UPPER_MODULE_ID } from "../../constants";
+import getToolOrderInsertionSequence from "../../utils/get_tool_order_insertion_sequence";
+import { AmbientLightProxy } from "../../proxies/ambient_light_proxy";
+import applyDefaultOutdoorLightSettings from "../../apps/apply_default_outdoor_light_settings";
 
 /**
  * Iterable of hook definitions for tools addition.

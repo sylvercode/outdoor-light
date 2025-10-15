@@ -2,9 +2,9 @@ import { HookDefinitions } from "fvtt-hook-attacher";
 import type ApplicationV2 from "fvtt-types/src/foundry/client/applications/api/application.mjs";
 import type { DataField } from "fvtt-types/src/foundry/common/data/fields.mjs";
 import AmbientLightConfig from "fvtt-types/src/foundry/client/applications/sheets/ambient-light-config.mjs";
-import { OutdoorLightFlagNames, OutdoorLightFlags, OutdoorLightFlagsDataModel } from "../data/outdoor_light_flags";
-import applyDefaultOutdoorLightSettings from "../apps/apply_default_outdoor_light_settings";
-import { AmbientLightProxy } from "../proxies/ambient_light_proxy";
+import { OutdoorLightFlagNames, OutdoorLightFlags, OutdoorLightFlagsDataModel } from "../../data/ambient_light_ext";
+import applyDefaultOutdoorLightSettings from "../../apps/apply_default_outdoor_light_settings";
+import { AmbientLightProxy } from "../../proxies/ambient_light_proxy";
 
 /**
  * Iterable of hook definitions for patching the AmbientLightConfig rendering.
