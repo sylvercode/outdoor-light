@@ -2,7 +2,7 @@ import { HookDefinitions } from "fvtt-hook-attacher";
 import { LibWrapperBaseCallback, LibWrapperBaseCallbackArgs, LibWrapperWrapperDefinitions } from "fvtt-lib-wrapper-types";
 import type SceneControls from "fvtt-types/src/foundry/client/applications/ui/scene-controls.mjs";
 import { MODULE_ID, UPPER_MODULE_ID } from "../constants";
-import { getToolOrderInsertionSequence } from "../utils/SceneControlsUtils";
+import { getToolOrderInsertionSequence } from "../utils/scene_controls_utils";
 
 /**
  * Iterable of hook definitions for tools addition.
