@@ -5,7 +5,7 @@ import { MODULE_ID, UPPER_MODULE_ID } from "../../constants";
 import getToolOrderInsertionSequence from "../../utils/get_tool_order_insertion_sequence";
 import { AmbientLightProxy } from "../../proxies/ambient_light_proxy";
 import applyDefaultOutdoorLightSettings from "../../apps/apply_default_outdoor_light_settings";
-import { outdoorLightSettings } from "src/ts/settings";
+import { outdoorLightSettings } from "../../settings";
 
 /**
  * Iterable of hook definitions for tools addition.
