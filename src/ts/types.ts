@@ -9,6 +9,7 @@ import * as OutdoorSceneFlagsDataModel from "./data/scene_ext";
 import * as ClockwiseSweepPolygonPatch from "./apps/clockwise_sweep_polygon_ext";
 import * as LightingLayerTools from "./ui/tools/lighting_layer_tools_ext";
 import * as WallsLayerTools from "./ui/tools/walls_layer_tools_ext";
+import * as settings from "./settings";
 
 /**
  * Interface for the Outdoor Light module, extending Foundry's Module interface.
@@ -32,6 +33,7 @@ export class OutdoorLightModuleHooks {
    * Iterable of callbacks to be called on module initialization.
    */
   static ON_INIT_MODULE_CALLBACKS: Iterable<OnInitModuleFunc> = [
+    settings.onInitHandle
   ];
 
   /**
