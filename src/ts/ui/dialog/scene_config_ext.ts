@@ -2,7 +2,7 @@ import { HookDefinitions } from "fvtt-hook-attacher";
 import type ApplicationV2 from "fvtt-types/src/foundry/client/applications/api/application.mjs";
 import type { DataField } from "fvtt-types/src/foundry/common/data/fields.mjs";
 import type SceneConfig from "fvtt-types/src/foundry/client/applications/sheets/scene-config.mjs";
-import { OutdoorLightMode, OutdoorSceneFlagNames, OutdoorSceneFlags, OutdoorSceneFlagsDataModel } from "../data/outdoor_scene_flags";
+import { OutdoorLightMode, OutdoorSceneFlagNames, OutdoorSceneFlags, OutdoorSceneFlagsDataModel } from "../../data/scene_ext";
 
 /**
  * Iterable of hook definitions for patching the SceneConfig rendering.

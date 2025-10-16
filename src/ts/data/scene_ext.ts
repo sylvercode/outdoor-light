@@ -1,6 +1,7 @@
 import { MODULE_ID, UPPER_MODULE_ID } from "../constants";
 import type { HookDefinitions } from "fvtt-hook-attacher";
 import { DataSchema, StringField } from "fvtt-types/src/foundry/common/data/fields.mjs";
+import { OutdoorLightFlagsDataModel } from "./ambient_light_ext";
 
 /**
  * Enum representing the available outdoor light modes.
@@ -154,12 +155,42 @@ export class OutdoorSceneFlagsDataModel extends foundry.abstract.DataModel<Outdo
     }
 }
 
+function updateScene(
+    scene: Scene,
+    change: Scene.UpdateData,
+    _options: Scene.Database.UpdateOptions,
+    _userId: string,
+): void {
+    const maxDarkness = change.environment?.globalLight?.darkness?.max;
+    if (maxDarkness === undefined)
+        return;
+
+    const sceneOutdoorFlag = new OutdoorSceneFlagsDataModel(scene);
+    if (sceneOutdoorFlag.outdoorLightMode !== OutdoorLightMode.manualGlobalLight)
+        return;
+
+    scene.lights.forEach(light => {
+        const lightOutdoorFlag = new OutdoorLightFlagsDataModel(light);
+        if (!lightOutdoorFlag.isOutdoor)
+            return;
+        light.update({
+            config: { darkness: { max: maxDarkness } }
+        });
+    });
+}
+
 /**
  * Iterable of hook definitions for this data model.
  */
 export const HOOKS_DEFINITIONS: Iterable<HookDefinitions> = [{
-    on: [{
-        name: "i18nInit",
-        callback: OutdoorSceneFlagsDataModel.i18nInit
-    }]
+    on: [
+        {
+            name: "i18nInit",
+            callback: OutdoorSceneFlagsDataModel.i18nInit
+        },
+        {
+            name: "updateScene",
+            callback: updateScene
+        }
+    ]
 }];

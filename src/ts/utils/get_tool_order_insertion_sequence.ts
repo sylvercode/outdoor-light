@@ -1,10 +1,19 @@
 import SceneControls from "fvtt-types/src/foundry/client/applications/ui/scene-controls.mjs";
 
-type InsertionInfo = { nextIndex: number, step: number };
-
+/**
+ * Type definition for a sequence generator function.
+ * The function returns a new number each time it is called.
+ */
 type SequenceGenerator = () => number;
 
-export function getToolOrderInsertionSequence(tools: Record<string, SceneControls.Tool>, tailToolNames: string[] = []): SequenceGenerator {
+/**
+ * Returns a sequence generator function that provides the next indexes to insert new tools at the end of the existing tools,
+ * but before the specified tail tools.
+ * @param tools The existing tools in the scene controls.
+ * @param tailToolNames The names of the tools that should remain at the end of the list.
+ * @returns A sequence generator function.
+ */
+export default function getToolOrderInsertionSequence(tools: Record<string, SceneControls.Tool>, tailToolNames: string[] = []): SequenceGenerator {
     let lastIndex = -1;
     let tailToolIndex = -1;
     for (const toolKey of Object.keys(tools)) {
@@ -37,7 +46,14 @@ export function getToolOrderInsertionSequence(tools: Record<string, SceneControl
     return createSequenceGenerator({ nextIndex: Math.max((lastIndex + step), 0), step });
 }
 
-function createSequenceGenerator(insertionInfo: InsertionInfo): SequenceGenerator {
+/**
+ * Creates a sequence generator function based on the provided insertion information.
+ * @param insertionInfo An object containing the next index to start from and the step size.
+ * @param insertionInfo.nextIndex The next index to start from.
+ * @param insertionInfo.step The step size to increment the index by.
+ * @returns A sequence generator function.
+ */
+function createSequenceGenerator(insertionInfo: { nextIndex: number, step: number }): SequenceGenerator {
     let currentIndex = insertionInfo.nextIndex;
     const step = insertionInfo.step;
 

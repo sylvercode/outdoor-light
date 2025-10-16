@@ -1,7 +1,7 @@
 import type { LibWrapperBaseCallback, LibWrapperBaseCallbackArgs, LibWrapperWrapperDefinitions } from "fvtt-lib-wrapper-types";
 import type { Edge } from "fvtt-types/src/foundry/client/canvas/geometry/edges/_module.mjs";
-import { OutdoorWallFlagsDataModel } from "../data/outdoor_wall_flags";
-import { OutdoorLightFlagsDataModel } from "../data/outdoor_light_flags";
+import { OutdoorWallFlagsDataModel } from "../data/wall_ext";
+import { OutdoorLightFlagsDataModel } from "../data/ambient_light_ext";
 
 /**
  * LibWrapper patch definitions for ClockwiseSweepPolygon edge inclusion test logic.
@@ -74,6 +74,10 @@ function getTestEdge(csp: ClockwiseSweepPolygon, edge: Edge): Edge {
     return clonedEdge;
 }
 
+/**
+ * Applies sense restriction to an edge to block outdoor light.
+ * @param edge The edge to modify
+ */
 function applyOutdoorWallSenseRestriction(edge: Edge): void {
     edge.light = CONST.WALL_SENSE_TYPES.NORMAL;
     edge.threshold = undefined;

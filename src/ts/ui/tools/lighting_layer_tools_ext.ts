@@ -1,9 +1,10 @@
 import { HookDefinitions } from "fvtt-hook-attacher";
 import { LibWrapperBaseCallback, LibWrapperBaseCallbackArgs, LibWrapperWrapperDefinitions } from "fvtt-lib-wrapper-types";
 import type SceneControls from "fvtt-types/src/foundry/client/applications/ui/scene-controls.mjs";
-import { MODULE_ID, UPPER_MODULE_ID } from "../constants";
-import { getToolOrderInsertionSequence } from "../utils/SceneControlsUtils";
-import { OutdoorLightMode, OutdoorSceneFlagsDataModel } from "../data/outdoor_scene_flags";
+import { MODULE_ID, UPPER_MODULE_ID } from "../../constants";
+import getToolOrderInsertionSequence from "../../utils/get_tool_order_insertion_sequence";
+import { AmbientLightProxy } from "../../proxies/ambient_light_proxy";
+import applyDefaultOutdoorLightSettings from "../../apps/apply_default_outdoor_light_settings";
 
 /**
  * Iterable of hook definitions for tools addition.
@@ -99,11 +100,56 @@ function LightingLayer_onDragLeftDrop(event: Canvas.Event.Pointer<AmbientLight>)
     if (scene == null)
         return;
 
-    const outdoorSceneFlags = new OutdoorSceneFlagsDataModel(scene);
-    if (outdoorSceneFlags.outdoorLightMode !== OutdoorLightMode.manualGlobalLight)
-        return;
+    const ambientLightProxy = new AmbientLightDocumentProxy(lightDoc);
+    applyDefaultOutdoorLightSettings(ambientLightProxy, scene);
+}
 
-    const sceneMaxDarkness = scene.environment.globalLight.darkness.max;
-    if (sceneMaxDarkness !== undefined)
-        lightDoc.config.darkness.max = sceneMaxDarkness;
+/**
+ * Proxy for AmbientLightDocument to implement the AmbientLightProxy interface.
+ */
+class AmbientLightDocumentProxy implements AmbientLightProxy {
+    constructor(private lightDoc: AmbientLightDocument) { }
+
+    /**
+     * @inheritdoc
+     */
+    setBright(bright: number) {
+        this.lightDoc.config.bright = bright;
+    }
+    /**
+     * @inheritdoc
+     */
+    setDim(dim: number) {
+        this.lightDoc.config.dim = dim;
+    }
+    /**
+     * @inheritdoc
+     */
+    getDim(): number {
+        return this.lightDoc.config.dim;
+    }
+    /**
+     * @inheritdoc
+     */
+    setHidden(hidden: boolean) {
+        this.lightDoc.hidden = hidden;
+    }
+    /**
+     * @inheritdoc
+     */
+    setLuminosity(luminosity: number) {
+        this.lightDoc.config.luminosity = luminosity;
+    }
+    /**
+     * @inheritdoc
+     */
+    setDarknessMax(max: number) {
+        this.lightDoc.config.darkness.max = max;
+    }
+    /**
+     * @inheritdoc
+     */
+    setAttenuation(attenuation: number) {
+        this.lightDoc.config.attenuation = attenuation;
+    }
 }
