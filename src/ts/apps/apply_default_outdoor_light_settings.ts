@@ -12,14 +12,14 @@ export default function applyDefaultOutdoorLightSettings(light: AmbientLightProx
     if (!outdoorSceneFlags.outdoorLightMode)
         return;
 
-    if (outdoorSceneFlags.outdoorLightStatus == OutdoorLightStatus.dim)
+    if (outdoorSceneFlags.outdoorLightStatus === OutdoorLightStatus.dim)
         light.setBright(0);
     else {
         light.setBright(light.getDim());
         light.setDim(0);
     }
 
-    if (outdoorSceneFlags.outdoorLightStatus == OutdoorLightStatus.off)
+    if (outdoorSceneFlags.outdoorLightStatus === OutdoorLightStatus.off)
         light.setHidden(true);
 
     if (outdoorSceneFlags.outdoorLightMode === OutdoorLightMode.manualGlobalLight) {
