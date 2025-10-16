@@ -42,6 +42,16 @@
       "lighting": {
         "toggleIsOutdoorLight": "Toggle Is Outdoor"
       }
+    },
+    "settings": {
+      "changeDefaultLightAttenuation": {
+        "name": "Change Default Light Attenuation",
+        "hint": "If enabled, the default light attenuation for new light sources will be changed to the value specified below."
+      },
+      "defaultLightAttenuationValue": {
+        "name": "Default Light Attenuation Value",
+        "hint": "The default light attenuation for new light sources if the setting above is enabled."
+      }
     }
   }
 }

@@ -5,6 +5,7 @@ import { MODULE_ID, UPPER_MODULE_ID } from "../../constants";
 import getToolOrderInsertionSequence from "../../utils/get_tool_order_insertion_sequence";
 import { AmbientLightProxy } from "../../proxies/ambient_light_proxy";
 import applyDefaultOutdoorLightSettings from "../../apps/apply_default_outdoor_light_settings";
+import { outdoorLightSettings } from "src/ts/settings";
 
 /**
  * Iterable of hook definitions for tools addition.
@@ -84,6 +85,11 @@ function LightingLayer_onDragLeftDrop(event: Canvas.Event.Pointer<AmbientLight>)
     // Nothing to do for existing lights
     if (lightDoc?.id !== null)
         return;
+
+    const defaultLightAttenuationValue = outdoorLightSettings.defaultLightAttenuationValue();
+    if (defaultLightAttenuationValue !== null) {
+        lightDoc.config.attenuation = defaultLightAttenuationValue;
+    }
 
     const lightControls = ui.controls?.control;
     if (lightControls?.name !== LIGHTING_LAYER_NAME)
