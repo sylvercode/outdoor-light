@@ -60,12 +60,15 @@ function getSceneControlButtons(controls: Record<string, SceneControls.Control>)
     if (game?.i18n == undefined)
         throw new Error("i18n not initialized");
 
+    if (game.user?.isGM !== true)
+        return;
+
     const wallTools = controls[WALLS_LAYER_NAME].tools;
     const getNextOrder = getToolOrderInsertionSequence(wallTools, YELLOW_TOOL_NAMES);
 
     wallTools[TOGGLE_OUTDOOR_WALLS_TOOL_NAME] = {
         name: TOGGLE_OUTDOOR_WALLS_TOOL_NAME,
-        title: game.i18n.localize(`${UPPER_MODULE_ID}.SceneControl.${WALLS_LAYER_NAME}.${TOGGLE_OUTDOOR_WALLS_TOOL_NAME}`),
+        title: game.i18n.localize(`${UPPER_MODULE_ID}.SceneControl.${WALLS_LAYER_NAME}.${TOGGLE_OUTDOOR_WALLS_TOOL_NAME}.title`),
         icon: "fas fa-cloud-sun",
         toggle: true,
         active: false,

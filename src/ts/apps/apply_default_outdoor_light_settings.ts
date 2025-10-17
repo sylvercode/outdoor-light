@@ -1,34 +1,47 @@
 import { OutdoorLightMode, OutdoorLightStatus, OutdoorSceneFlagsDataModel } from "../data/scene_ext";
 import { AmbientLightProxy } from "../proxies/ambient_light_proxy";
 
+export type Options = { luminosity?: boolean, attenuation?: boolean, maxDarkness?: boolean, brightDimHidden?: boolean };
+
 /**
  * Applies default outdoor light settings to AmbientLight based on the Scene Flags.
  * @param light The AmbientLightProxy to apply settings to.
  * @param scene The Scene containing the AmbientLight.
  */
-export default function applyDefaultOutdoorLightSettings(light: AmbientLightProxy, scene: Scene): void {
+export default function applyDefaultOutdoorLightSettings(light: AmbientLightProxy, scene: Scene, options?: Options): void {
+    if (!options)
+        options = { luminosity: true, attenuation: true, maxDarkness: true, brightDimHidden: true };
+
     const outdoorSceneFlags = new OutdoorSceneFlagsDataModel(scene);
 
     if (!outdoorSceneFlags.outdoorLightMode)
         return;
 
-    if (outdoorSceneFlags.outdoorLightStatus === OutdoorLightStatus.dim)
-        light.setBright(0);
-    else {
-        light.setBright(light.getDim());
-        light.setDim(0);
-    }
+    if (options.brightDimHidden) {
+        if (outdoorSceneFlags.outdoorLightStatus === OutdoorLightStatus.dim) {
+            light.setDim(Math.max(light.getBright(), light.getDim()));
+            light.setBright(0);
+        }
+        else {
+            light.setBright(Math.max(light.getBright(), light.getDim()));
+            light.setDim(0);
+        }
 
-    if (outdoorSceneFlags.outdoorLightStatus === OutdoorLightStatus.off)
-        light.setHidden(true);
+        light.setHidden(outdoorSceneFlags.outdoorLightStatus === OutdoorLightStatus.off);
+    }
 
     if (outdoorSceneFlags.outdoorLightMode === OutdoorLightMode.manualGlobalLight) {
-        light.setLuminosity(0);
-        const sceneMaxDarkness = scene.environment.globalLight.darkness.max;
-        if (sceneMaxDarkness !== undefined)
-            light.setDarknessMax(sceneMaxDarkness);
+        if (options.luminosity)
+            light.setLuminosity(0);
+
+        if (options.maxDarkness) {
+            const sceneMaxDarkness = scene.environment.globalLight.darkness.max;
+            if (sceneMaxDarkness !== undefined)
+                light.setDarknessMax(sceneMaxDarkness);
+        }
     }
     else {
-        light.setAttenuation(0);
+        if (options.attenuation)
+            light.setAttenuation(0);
     }
 }

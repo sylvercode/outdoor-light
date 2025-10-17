@@ -3,9 +3,10 @@ import { LibWrapperBaseCallback, LibWrapperBaseCallbackArgs, LibWrapperWrapperDe
 import type SceneControls from "fvtt-types/src/foundry/client/applications/ui/scene-controls.mjs";
 import { MODULE_ID, UPPER_MODULE_ID } from "../../constants";
 import getToolOrderInsertionSequence from "../../utils/get_tool_order_insertion_sequence";
-import { AmbientLightProxy } from "../../proxies/ambient_light_proxy";
+import { AmbientLightDocumentProxy } from "../../proxies/ambient_light_proxy";
 import applyDefaultOutdoorLightSettings from "../../apps/apply_default_outdoor_light_settings";
 import { outdoorLightSettings } from "../../settings";
+import { getChangeLightStatusTool } from "./change_light_status";
 
 /**
  * Iterable of hook definitions for tools addition.
@@ -68,12 +69,15 @@ function getSceneControlButtons(controls: Record<string, SceneControls.Control>)
 
     lightTools[TOGGLE_IS_OUTDOOR_TOOL_NAME] = {
         name: TOGGLE_IS_OUTDOOR_TOOL_NAME,
-        title: game.i18n.localize(`${UPPER_MODULE_ID}.SceneControl.${LIGHTING_LAYER_NAME}.${TOGGLE_IS_OUTDOOR_TOOL_NAME}`),
+        title: game.i18n.localize(`${UPPER_MODULE_ID}.SceneControl.${LIGHTING_LAYER_NAME}.${TOGGLE_IS_OUTDOOR_TOOL_NAME}.title`),
         icon: "fas fa-cloud-sun",
         toggle: true,
         active: false,
         order: getNextOrder(),
     };
+
+    const changeLightStatusTool = getChangeLightStatusTool(getNextOrder());
+    lightTools[changeLightStatusTool.name] = changeLightStatusTool;
 }
 
 /**
@@ -108,54 +112,4 @@ function LightingLayer_onDragLeftDrop(event: Canvas.Event.Pointer<AmbientLight>)
 
     const ambientLightProxy = new AmbientLightDocumentProxy(lightDoc);
     applyDefaultOutdoorLightSettings(ambientLightProxy, scene);
-}
-
-/**
- * Proxy for AmbientLightDocument to implement the AmbientLightProxy interface.
- */
-class AmbientLightDocumentProxy implements AmbientLightProxy {
-    constructor(private lightDoc: AmbientLightDocument) { }
-
-    /**
-     * @inheritdoc
-     */
-    setBright(bright: number) {
-        this.lightDoc.config.bright = bright;
-    }
-    /**
-     * @inheritdoc
-     */
-    setDim(dim: number) {
-        this.lightDoc.config.dim = dim;
-    }
-    /**
-     * @inheritdoc
-     */
-    getDim(): number {
-        return this.lightDoc.config.dim;
-    }
-    /**
-     * @inheritdoc
-     */
-    setHidden(hidden: boolean) {
-        this.lightDoc.hidden = hidden;
-    }
-    /**
-     * @inheritdoc
-     */
-    setLuminosity(luminosity: number) {
-        this.lightDoc.config.luminosity = luminosity;
-    }
-    /**
-     * @inheritdoc
-     */
-    setDarknessMax(max: number) {
-        this.lightDoc.config.darkness.max = max;
-    }
-    /**
-     * @inheritdoc
-     */
-    setAttenuation(attenuation: number) {
-        this.lightDoc.config.attenuation = attenuation;
-    }
 }

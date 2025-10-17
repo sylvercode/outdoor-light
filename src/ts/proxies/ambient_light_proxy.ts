@@ -5,17 +5,21 @@
  */
 export type AmbientLightProxy = {
     /**
+     * Gets the bright light radius (aka AmbientLightDocument.config.bright).
+     */
+    getBright(): number;
+    /**
      * Sets the bright light radius (aka AmbientLightDocument.config.bright).
      */
     setBright(bright: number): void;
     /**
-     * Sets the dim light radius (aka AmbientLightDocument.config.dim).
-     */
-    setDim(dim: number): void;
-    /**
      * Gets the dim light radius (aka AmbientLightDocument.config.dim).
      */
     getDim(): number;
+    /**
+     * Sets the dim light radius (aka AmbientLightDocument.config.dim).
+     */
+    setDim(dim: number): void;
     /**
      * Sets the hidden state of the light (aka AmbientLightDocument.hidden).
      */
@@ -33,3 +37,60 @@ export type AmbientLightProxy = {
      */
     setAttenuation(attenuation: number): void;
 };
+
+/**
+ * Proxy for AmbientLightDocument to implement the AmbientLightProxy interface.
+ */
+export class AmbientLightDocumentProxy implements AmbientLightProxy {
+    constructor(protected lightDoc: AmbientLightDocument) { }
+
+    /**
+     * @inheritdoc
+     */
+    getBright(): number {
+        return this.lightDoc.config.bright;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    setBright(bright: number) {
+        this.lightDoc.config.bright = bright;
+    }
+    /**
+     * @inheritdoc
+     */
+    setDim(dim: number) {
+        this.lightDoc.config.dim = dim;
+    }
+    /**
+     * @inheritdoc
+     */
+    getDim(): number {
+        return this.lightDoc.config.dim;
+    }
+    /**
+     * @inheritdoc
+     */
+    setHidden(hidden: boolean) {
+        this.lightDoc.hidden = hidden;
+    }
+    /**
+     * @inheritdoc
+     */
+    setLuminosity(luminosity: number) {
+        this.lightDoc.config.luminosity = luminosity;
+    }
+    /**
+     * @inheritdoc
+     */
+    setDarknessMax(max: number) {
+        this.lightDoc.config.darkness.max = max;
+    }
+    /**
+     * @inheritdoc
+     */
+    setAttenuation(attenuation: number) {
+        this.lightDoc.config.attenuation = attenuation;
+    }
+}

@@ -89,6 +89,17 @@ class AmbientLightAppConfigProxy implements AmbientLightProxy {
     /**
      * @inheritdoc
      */
+    getBright(): number {
+        const brightInput = this.content.querySelector('input[name="config.bright"]') as HTMLInputElement | null;
+        if (!brightInput) {
+            console.error('Could not find input[name="config.bright"]');
+            return 0;
+        }
+        return Number(brightInput.value);
+    }
+    /**
+     * @inheritdoc
+     */
     setBright(bright: number) {
         const brightInput = this.content.querySelector('input[name="config.bright"]') as HTMLInputElement | null;
         if (!brightInput) {
@@ -100,17 +111,6 @@ class AmbientLightAppConfigProxy implements AmbientLightProxy {
     /**
      * @inheritdoc
      */
-    setDim(dim: number) {
-        const dimInput = this.content.querySelector('input[name="config.dim"]') as HTMLInputElement | null;
-        if (!dimInput) {
-            console.error('Could not find input[name="config.dim"]');
-            return;
-        }
-        dimInput.value = String(dim);
-    }
-    /**
-     * @inheritdoc
-     */
     getDim(): number {
         const dimInput = this.content.querySelector('input[name="config.dim"]') as HTMLInputElement | null;
         if (!dimInput) {
@@ -118,6 +118,17 @@ class AmbientLightAppConfigProxy implements AmbientLightProxy {
             return 0;
         }
         return Number(dimInput.value);
+    }
+    /**
+     * @inheritdoc
+     */
+    setDim(dim: number) {
+        const dimInput = this.content.querySelector('input[name="config.dim"]') as HTMLInputElement | null;
+        if (!dimInput) {
+            console.error('Could not find input[name="config.dim"]');
+            return;
+        }
+        dimInput.value = String(dim);
     }
     /**
      * @inheritdoc

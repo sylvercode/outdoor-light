@@ -37,10 +37,17 @@
     },
     "SceneControl": {
       "walls": {
-        "toggleOutdoorWalls": "Toggle Outdoor Walls"
+        "toggleOutdoorWalls": {
+          "title": "Outdoor Walls"
+        }
       },
       "lighting": {
-        "toggleIsOutdoorLight": "Toggle Is Outdoor"
+        "toggleIsOutdoorLight": {
+          "title": "Outdoor Light"
+        },
+        "changeLightStatus": {
+          "title": "Change Outdoor Lights Status"
+        }
       }
     },
     "settings": {
