@@ -2,6 +2,8 @@ import { MODULE_ID, UPPER_MODULE_ID } from "../constants";
 import type { HookDefinitions } from "fvtt-hook-attacher";
 import { DataSchema, StringField } from "fvtt-types/src/foundry/common/data/fields.mjs";
 import { OutdoorLightFlagsDataModel } from "./ambient_light_ext";
+import applyDefaultOutdoorLightSettings, { Options as ApplyOptions } from "../apps/apply_default_outdoor_light_settings";
+import { AmbientLightDocumentProxy, AmbientLightDocWithParent } from "../proxies/ambient_light_proxy";
 
 /**
  * Enum representing the available outdoor light modes.
@@ -161,22 +163,88 @@ function updateScene(
     _options: Scene.Database.UpdateOptions,
     _userId: string,
 ): void {
-    const maxDarkness = change.environment?.globalLight?.darkness?.max;
-    if (maxDarkness === undefined)
-        return;
-
     const sceneOutdoorFlag = new OutdoorSceneFlagsDataModel(scene);
-    if (sceneOutdoorFlag.outdoorLightMode !== OutdoorLightMode.manualGlobalLight)
-        return;
+
+    const applyOptions: ApplyOptions = {};
+
+    const maxDarkness = change.environment?.globalLight?.darkness?.max;
+    if (maxDarkness !== undefined && sceneOutdoorFlag.outdoorLightMode === OutdoorLightMode.manualGlobalLight)
+        applyOptions.maxDarkness = true;
+
+    const changedOutdoorLightStatus = change.flags?.[MODULE_ID]?.[OutdoorSceneFlagNames.outdoorLightStatus];
+    if (changedOutdoorLightStatus !== undefined)
+        applyOptions.brightDimHidden = true;
 
     scene.lights.forEach(light => {
         const lightOutdoorFlag = new OutdoorLightFlagsDataModel(light);
         if (!lightOutdoorFlag.isOutdoor)
             return;
-        light.update({
-            config: { darkness: { max: maxDarkness } }
-        });
+
+        const ambientLightProxy = new AmbientLightDocumentUpdateDataProxy(light as AmbientLightDocWithParent);
+        applyDefaultOutdoorLightSettings(ambientLightProxy, applyOptions);
+
+        light.update(ambientLightProxy.GetUpdateData());
     });
+}
+
+/**
+ * Proxy for AmbientLightDocument that collects update data instead of applying changes directly.
+ */
+class AmbientLightDocumentUpdateDataProxy extends AmbientLightDocumentProxy {
+    private updateData: AmbientLightDocument.UpdateData = {};
+
+    constructor(
+        lightDoc: AmbientLightDocument & { parent: Scene }
+    ) {
+        super(lightDoc);
+    }
+
+    GetUpdateData(): AmbientLightDocument.UpdateData {
+        return this.updateData;
+    }
+
+    override setBright(bright: number): void {
+        if (this.getBright() === bright)
+            return;
+
+        this.updateData.config ??= {};
+        this.updateData.config.bright = bright;
+    }
+    override setDim(dim: number): void {
+        if (this.getDim() === dim)
+            return;
+
+        this.updateData.config ??= {};
+        this.updateData.config.dim = dim;
+    }
+    override setHidden(hidden: boolean): void {
+        if (this.lightDoc.hidden === hidden)
+            return;
+
+        this.updateData.hidden = hidden;
+    }
+    override setLuminosity(luminosity: number): void {
+        if (this.lightDoc.config.luminosity === luminosity)
+            return;
+
+        this.updateData.config ??= {};
+        this.updateData.config.luminosity = luminosity;
+    }
+    override setDarknessMax(max: number): void {
+        if (this.lightDoc.config.darkness?.max === max)
+            return;
+
+        this.updateData.config ??= {};
+        this.updateData.config.darkness ??= {};
+        this.updateData.config.darkness.max = max;
+    }
+    override setAttenuation(attenuation: number): void {
+        if (this.lightDoc.config.attenuation === attenuation)
+            return;
+
+        this.updateData.config ??= {};
+        this.updateData.config.attenuation = attenuation;
+    }
 }
 
 /**

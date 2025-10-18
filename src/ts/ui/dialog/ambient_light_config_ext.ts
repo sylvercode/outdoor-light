@@ -28,6 +28,10 @@ async function renderAmbientLightConfig(
     element: HTMLElement,
     context: ApplicationV2.RenderContextOf<AmbientLightConfig>,
     _options: ApplicationV2.RenderOptionsOf<AmbientLightConfig>) {
+    if (!context.document.parent) {
+        console.error("AmbientLightDocument has no parent Scene");
+        return;
+    }
 
     const content = element.querySelector(".window-content");
     if (!content) {
@@ -69,14 +73,12 @@ async function renderAmbientLightConfig(
         return;
     }
 
-    const ambientLightProxy = new AmbientLightAppConfigProxy(content);
+    const ambientLightProxy = new AmbientLightAppConfigProxy(content, context.document.parent);
     isOutdoorFieldInput.addEventListener("change", async () => {
-        if (!isOutdoorFieldInput.checked
-            || context.document.parent === null
-        )
+        if (!isOutdoorFieldInput.checked)
             return;
 
-        applyDefaultOutdoorLightSettings(ambientLightProxy, context.document.parent);
+        applyDefaultOutdoorLightSettings(ambientLightProxy);
     });
 }
 
@@ -84,8 +86,29 @@ async function renderAmbientLightConfig(
  * Implementation of AmbientLightProxy that manipulates the AmbientLightConfig application UI.
  */
 class AmbientLightAppConfigProxy implements AmbientLightProxy {
-    constructor(private content: Element) { }
+    constructor(
+        private content: Element,
+        private scene: Scene
+    ) { }
 
+    /**
+     * @inheritdoc
+     */
+    getScene(): Scene {
+        return this.scene;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    getBright(): number {
+        const brightInput = this.content.querySelector('input[name="config.bright"]') as HTMLInputElement | null;
+        if (!brightInput) {
+            console.error('Could not find input[name="config.bright"]');
+            return 0;
+        }
+        return Number(brightInput.value);
+    }
     /**
      * @inheritdoc
      */
@@ -100,17 +123,6 @@ class AmbientLightAppConfigProxy implements AmbientLightProxy {
     /**
      * @inheritdoc
      */
-    setDim(dim: number) {
-        const dimInput = this.content.querySelector('input[name="config.dim"]') as HTMLInputElement | null;
-        if (!dimInput) {
-            console.error('Could not find input[name="config.dim"]');
-            return;
-        }
-        dimInput.value = String(dim);
-    }
-    /**
-     * @inheritdoc
-     */
     getDim(): number {
         const dimInput = this.content.querySelector('input[name="config.dim"]') as HTMLInputElement | null;
         if (!dimInput) {
@@ -118,6 +130,17 @@ class AmbientLightAppConfigProxy implements AmbientLightProxy {
             return 0;
         }
         return Number(dimInput.value);
+    }
+    /**
+     * @inheritdoc
+     */
+    setDim(dim: number) {
+        const dimInput = this.content.querySelector('input[name="config.dim"]') as HTMLInputElement | null;
+        if (!dimInput) {
+            console.error('Could not find input[name="config.dim"]');
+            return;
+        }
+        dimInput.value = String(dim);
     }
     /**
      * @inheritdoc
