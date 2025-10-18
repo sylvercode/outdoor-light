@@ -1,17 +1,28 @@
 import { OutdoorLightMode, OutdoorLightStatus, OutdoorSceneFlagsDataModel } from "../data/scene_ext";
 import { AmbientLightProxy } from "../proxies/ambient_light_proxy";
 
+/**
+ * Options for applying default outdoor light settings.
+ */
 export type Options = { luminosity?: boolean, attenuation?: boolean, maxDarkness?: boolean, brightDimHidden?: boolean };
+
+/**
+ * Default options for applying outdoor light settings.
+ */
+const DEFAULT_OPTIONS: { [K in keyof Required<Options>]: true } = {
+    luminosity: true,
+    attenuation: true,
+    maxDarkness: true,
+    brightDimHidden: true
+};
 
 /**
  * Applies default outdoor light settings to AmbientLight based on the Scene Flags.
  * @param light The AmbientLightProxy to apply settings to.
- * @param scene The Scene containing the AmbientLight.
+ * @param options Options to control which settings to apply. Defaults to all true.
  */
-export default function applyDefaultOutdoorLightSettings(light: AmbientLightProxy, scene: Scene, options?: Options): void {
-    if (!options)
-        options = { luminosity: true, attenuation: true, maxDarkness: true, brightDimHidden: true };
-
+export default function applyDefaultOutdoorLightSettings(light: AmbientLightProxy, options: Options = DEFAULT_OPTIONS): void {
+    const scene = light.getScene();
     const outdoorSceneFlags = new OutdoorSceneFlagsDataModel(scene);
 
     if (!outdoorSceneFlags.outdoorLightMode)

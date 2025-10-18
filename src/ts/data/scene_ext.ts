@@ -2,8 +2,8 @@ import { MODULE_ID, UPPER_MODULE_ID } from "../constants";
 import type { HookDefinitions } from "fvtt-hook-attacher";
 import { DataSchema, StringField } from "fvtt-types/src/foundry/common/data/fields.mjs";
 import { OutdoorLightFlagsDataModel } from "./ambient_light_ext";
-import applyDefaultOutdoorLightSettings, { Options as applyOptions } from "../apps/apply_default_outdoor_light_settings";
-import { AmbientLightDocumentProxy } from "../proxies/ambient_light_proxy";
+import applyDefaultOutdoorLightSettings, { Options as ApplyOptions } from "../apps/apply_default_outdoor_light_settings";
+import { AmbientLightDocumentProxy, AmbientLightDocWithParent } from "../proxies/ambient_light_proxy";
 
 /**
  * Enum representing the available outdoor light modes.
@@ -165,7 +165,7 @@ function updateScene(
 ): void {
     const sceneOutdoorFlag = new OutdoorSceneFlagsDataModel(scene);
 
-    const applyOptions: applyOptions = {};
+    const applyOptions: ApplyOptions = {};
 
     const maxDarkness = change.environment?.globalLight?.darkness?.max;
     if (maxDarkness !== undefined && sceneOutdoorFlag.outdoorLightMode === OutdoorLightMode.manualGlobalLight)
@@ -180,31 +180,38 @@ function updateScene(
         if (!lightOutdoorFlag.isOutdoor)
             return;
 
-        const updateData: AmbientLightDocument.UpdateData = {};
-        const ambientLightProxy = new AmbientLightDocumentUpdateDataProxy(light, updateData);
-        applyDefaultOutdoorLightSettings(ambientLightProxy, scene, applyOptions);
+        const ambientLightProxy = new AmbientLightDocumentUpdateDataProxy(light as AmbientLightDocWithParent);
+        applyDefaultOutdoorLightSettings(ambientLightProxy, applyOptions);
 
-        light.update(updateData);
+        light.update(ambientLightProxy.GetUpdateData());
     });
 }
 
+/**
+ * Proxy for AmbientLightDocument that collects update data instead of applying changes directly.
+ */
 class AmbientLightDocumentUpdateDataProxy extends AmbientLightDocumentProxy {
+    private updateData: AmbientLightDocument.UpdateData = {};
+
     constructor(
-        lightDoc: AmbientLightDocument,
-        private updateData: AmbientLightDocument.UpdateData
+        lightDoc: AmbientLightDocument & { parent: Scene }
     ) {
         super(lightDoc);
     }
 
+    GetUpdateData(): AmbientLightDocument.UpdateData {
+        return this.updateData;
+    }
+
     override setBright(bright: number): void {
-        if (this.lightDoc.config.bright === bright)
+        if (this.getBright() === bright)
             return;
 
         this.updateData.config ??= {};
         this.updateData.config.bright = bright;
     }
     override setDim(dim: number): void {
-        if (this.lightDoc.config.dim === dim)
+        if (this.getDim() === dim)
             return;
 
         this.updateData.config ??= {};

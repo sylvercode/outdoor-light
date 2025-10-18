@@ -4,6 +4,7 @@
  * Implementation may vary depending on context (e.g. direct AmbientLight manipulation vs. UI manipulation).
  */
 export type AmbientLightProxy = {
+    getScene(): Scene;
     /**
      * Gets the bright light radius (aka AmbientLightDocument.config.bright).
      */
@@ -39,10 +40,21 @@ export type AmbientLightProxy = {
 };
 
 /**
+ * Type alias for AmbientLightDocument with a guaranteed non-null parent Scene.
+ */
+export type AmbientLightDocWithParent = AmbientLightDocument & { parent: NonNullable<AmbientLightDocument["parent"]> };
+/**
  * Proxy for AmbientLightDocument to implement the AmbientLightProxy interface.
  */
 export class AmbientLightDocumentProxy implements AmbientLightProxy {
-    constructor(protected lightDoc: AmbientLightDocument) { }
+    constructor(protected lightDoc: AmbientLightDocWithParent) { }
+
+    /**
+     * @inheritdoc
+     */
+    getScene(): Scene {
+        return this.lightDoc.parent;
+    }
 
     /**
      * @inheritdoc

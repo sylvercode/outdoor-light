@@ -28,6 +28,10 @@ async function renderAmbientLightConfig(
     element: HTMLElement,
     context: ApplicationV2.RenderContextOf<AmbientLightConfig>,
     _options: ApplicationV2.RenderOptionsOf<AmbientLightConfig>) {
+    if (!context.document.parent) {
+        console.error("AmbientLightDocument has no parent Scene");
+        return;
+    }
 
     const content = element.querySelector(".window-content");
     if (!content) {
@@ -69,14 +73,12 @@ async function renderAmbientLightConfig(
         return;
     }
 
-    const ambientLightProxy = new AmbientLightAppConfigProxy(content);
+    const ambientLightProxy = new AmbientLightAppConfigProxy(content, context.document.parent);
     isOutdoorFieldInput.addEventListener("change", async () => {
-        if (!isOutdoorFieldInput.checked
-            || context.document.parent === null
-        )
+        if (!isOutdoorFieldInput.checked)
             return;
 
-        applyDefaultOutdoorLightSettings(ambientLightProxy, context.document.parent);
+        applyDefaultOutdoorLightSettings(ambientLightProxy);
     });
 }
 
@@ -84,7 +86,17 @@ async function renderAmbientLightConfig(
  * Implementation of AmbientLightProxy that manipulates the AmbientLightConfig application UI.
  */
 class AmbientLightAppConfigProxy implements AmbientLightProxy {
-    constructor(private content: Element) { }
+    constructor(
+        private content: Element,
+        private scene: Scene
+    ) { }
+
+    /**
+     * @inheritdoc
+     */
+    getScene(): Scene {
+        return this.scene;
+    }
 
     /**
      * @inheritdoc

@@ -3,7 +3,7 @@ import { LibWrapperBaseCallback, LibWrapperBaseCallbackArgs, LibWrapperWrapperDe
 import type SceneControls from "fvtt-types/src/foundry/client/applications/ui/scene-controls.mjs";
 import { MODULE_ID, UPPER_MODULE_ID } from "../../constants";
 import getToolOrderInsertionSequence from "../../utils/get_tool_order_insertion_sequence";
-import { AmbientLightDocumentProxy } from "../../proxies/ambient_light_proxy";
+import { AmbientLightDocumentProxy, AmbientLightDocWithParent } from "../../proxies/ambient_light_proxy";
 import applyDefaultOutdoorLightSettings from "../../apps/apply_default_outdoor_light_settings";
 import { outdoorLightSettings } from "../../settings";
 import { getChangeLightStatusTool } from "./change_light_status";
@@ -106,10 +106,9 @@ function LightingLayer_onDragLeftDrop(event: Canvas.Event.Pointer<AmbientLight>)
     const outdoorFlags = lightDoc.flags[MODULE_ID] ??= {};
     outdoorFlags.isOutdoor = true;
 
-    const scene = lightDoc.parent;
-    if (scene == null)
-        return;
+    if (lightDoc.parent)
+        throw new Error("Light document should not have a parent at this point");
 
-    const ambientLightProxy = new AmbientLightDocumentProxy(lightDoc);
-    applyDefaultOutdoorLightSettings(ambientLightProxy, scene);
+    const ambientLightProxy = new AmbientLightDocumentProxy(lightDoc as AmbientLightDocWithParent);
+    applyDefaultOutdoorLightSettings(ambientLightProxy);
 }
