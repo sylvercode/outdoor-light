@@ -75,7 +75,7 @@ async function onChangeLightStatusTool(_event: Event, _active: boolean) {
                 }
             });
         }
-    })
+    });
 
     await changeLightStatusDialog.render({ force: true });
 }

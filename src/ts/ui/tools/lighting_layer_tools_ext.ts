@@ -106,8 +106,8 @@ function LightingLayer_onDragLeftDrop(event: Canvas.Event.Pointer<AmbientLight>)
     const outdoorFlags = lightDoc.flags[MODULE_ID] ??= {};
     outdoorFlags.isOutdoor = true;
 
-    if (lightDoc.parent)
-        throw new Error("Light document should not have a parent at this point");
+    if (!lightDoc.parent)
+        throw new Error("Light document should have a parent at this point");
 
     const ambientLightProxy = new AmbientLightDocumentProxy(lightDoc as AmbientLightDocWithParent);
     applyDefaultOutdoorLightSettings(ambientLightProxy);
