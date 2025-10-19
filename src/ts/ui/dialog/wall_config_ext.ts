@@ -95,12 +95,16 @@ async function renderWallConfig(
  * @param textKey The localization key for the label text.
  */
 function changeLabelText(fieldGroup: HTMLDivElement, textKey: string) {
-    if (!game.i18n)
-        throw new Error("i18n not found");
+    if (!game.i18n) {
+        console.error("i18n not initialized");
+        return;
+    }
 
     const label = fieldGroup.querySelector('label');
-    if (!label)
-        throw new Error("Label not found in field group");
+    if (!label) {
+        console.error("Label not found in field group");
+        return;
+    }
 
     label.textContent = game.i18n.localize(textKey);
 }
