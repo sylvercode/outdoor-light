@@ -2,15 +2,22 @@ import { MODULE_ID, UPPER_MODULE_ID } from "./constants";
 
 enum SettingName {
     changeDefaultLightAttenuation = "changeDefaultLightAttenuation",
-    defaultLightAttenuationValue = "defaultLightAttenuationValue"
+    defaultLightAttenuationValue = "defaultLightAttenuationValue",
+    defaultWallLightEmissionSide = "defaultWallLightEmissionSide",
+    defaultWallLightEmissionDim = "defaultWallLightEmissionDim",
+    defaultWallLightEmissionBright = "defaultWallLightEmissionBright",
 }
 
 const defaultLightAttenuationValueFieldOptions = { step: 0.05, initial: 0.6 };
+const defaultWallLightEmissionDimFieldOptions = { initial: 4, min: 0 };
+const defaultWallLightEmissionBrightFieldOptions = { initial: 2, min: 0, };
 
 declare module "fvtt-types/configuration" {
     interface SettingConfig {
         "outdoor-light.changeDefaultLightAttenuation": foundry.data.fields.BooleanField;
         "outdoor-light.defaultLightAttenuationValue": foundry.data.fields.AlphaField<typeof defaultLightAttenuationValueFieldOptions>;
+        "outdoor-light.defaultWallLightEmissionDim": foundry.data.fields.NumberField<typeof defaultWallLightEmissionDimFieldOptions>;
+        "outdoor-light.defaultWallLightEmissionBright": foundry.data.fields.NumberField<typeof defaultWallLightEmissionBrightFieldOptions>;
     }
 }
 
@@ -32,6 +39,22 @@ function registerSettings() {
         scope: "world",
         config: true,
         type: new foundry.data.fields.AlphaField(defaultLightAttenuationValueFieldOptions)
+    });
+
+    game.settings.register(MODULE_ID, SettingName.defaultWallLightEmissionDim, {
+        name: game.i18n.localize(`${UPPER_MODULE_ID}.settings.${SettingName.defaultWallLightEmissionDim}.name`),
+        hint: game.i18n.localize(`${UPPER_MODULE_ID}.settings.${SettingName.defaultWallLightEmissionDim}.hint`),
+        scope: "world",
+        config: true,
+        type: new foundry.data.fields.NumberField(defaultWallLightEmissionDimFieldOptions)
+    });
+
+    game.settings.register(MODULE_ID, SettingName.defaultWallLightEmissionBright, {
+        name: game.i18n.localize(`${UPPER_MODULE_ID}.settings.${SettingName.defaultWallLightEmissionBright}.name`),
+        hint: game.i18n.localize(`${UPPER_MODULE_ID}.settings.${SettingName.defaultWallLightEmissionBright}.hint`),
+        scope: "world",
+        config: true,
+        type: new foundry.data.fields.NumberField(defaultWallLightEmissionBrightFieldOptions)
     });
 }
 

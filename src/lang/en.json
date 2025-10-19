@@ -58,6 +58,14 @@
       "defaultLightAttenuationValue": {
         "name": "Default Light Attenuation Value",
         "hint": "The default light attenuation for new light sources if the setting above is enabled."
+      },
+      "defaultWallLightEmissionDim": {
+        "name": "Default Dim Wall Light Emission",
+        "hint": "In square grid units."
+      },
+      "defaultWallLightEmissionBright": {
+        "name": "Default Bright Wall Light Emission",
+        "hint": "In square grid units."
       }
     }
   }
