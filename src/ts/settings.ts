@@ -9,8 +9,8 @@ enum SettingName {
 }
 
 const defaultLightAttenuationValueFieldOptions = { step: 0.05, initial: 0.6 };
-const defaultWallLightEmissionDimFieldOptions = { initial: 4 };
-const defaultWallLightEmissionBrightFieldOptions = { initial: 2 };
+const defaultWallLightEmissionDimFieldOptions = { initial: 4, min: 0 };
+const defaultWallLightEmissionBrightFieldOptions = { initial: 2, min: 0, };
 
 declare module "fvtt-types/configuration" {
     interface SettingConfig {
