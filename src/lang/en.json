@@ -11,6 +11,22 @@
       "FIELDS": {
         "isBlockingOutdoorLight": {
           "label": "Is Blocking Outdoor Light"
+        },
+        "lightEmission": {
+          "side": {
+            "label": "Light Emission Side",
+            "hint": "Enable light emission on one side of the wall."
+          },
+          "dim": {
+            "label": "Light Emission Dim"
+          },
+          "bright": {
+            "label": "Light Emission Bright"
+          },
+          "units": {
+            "label": "Light Emission Units",
+            "hint": "Determines the units used for light emission measurements. \"Wall Length Proportional Ratio\" scales with wall length, while \"Feets\" uses fixed distance."
+          }
         }
       }
     },
@@ -34,6 +50,15 @@
       "off": "Off",
       "dim": "Dim",
       "bright": "Bright"
+    },
+    "LightEmissionSide": {
+      "none": "None",
+      "left": "Left",
+      "right": "Right"
+    },
+    "LightEmissionUnits": {
+      "wallLengthProportionalRatio": "Wall Length Proportional Ratio",
+      "feets": "Feets"
     },
     "SceneControl": {
       "walls": {
@@ -61,12 +86,18 @@
       },
       "defaultWallLightEmissionDim": {
         "name": "Default Dim Wall Light Emission",
-        "hint": "In square grid units."
+        "hint": "In Wall Length Proportional Ratio units."
       },
       "defaultWallLightEmissionBright": {
         "name": "Default Bright Wall Light Emission",
-        "hint": "In square grid units."
+        "hint": "In Wall Length Proportional Ratio units."
       }
-    }
+    },
+    "LightEmissionSettingsLegend": "Light Emission Settings",
+    "radius": "Radius",
+    "side": "Side",
+    "dim": "Dim",
+    "bright": "Bright",
+    "units": "Units"
   }
 }

@@ -1,9 +1,10 @@
 import { MODULE_ID, UPPER_MODULE_ID } from "../constants";
 import type { HookDefinitions } from "fvtt-hook-attacher";
-import { DataSchema, StringField } from "fvtt-types/src/foundry/common/data/fields.mjs";
+import { DataSchema } from "fvtt-types/src/foundry/common/data/fields.mjs";
 import { OutdoorLightFlagsDataModel } from "./ambient_light_ext";
 import applyDefaultOutdoorLightSettings, { Options as ApplyOptions } from "../apps/apply_default_outdoor_light_settings";
 import { AmbientLightDocumentProxy, AmbientLightDocWithParent } from "../proxies/ambient_light_proxy";
+import { EnumField, EnumFieldOptions } from "../utils/enum_field";
 
 /**
  * Enum representing the available outdoor light modes.
@@ -14,29 +15,15 @@ export enum OutdoorLightMode {
 }
 
 /**
- * Field for selecting an outdoor light mode.
+ * Options for OutdoorLightModes Field.
  */
-class OutdoorLightModesField extends foundry.data.fields.StringField<typeof OutdoorLightModesField.Options> {
-    constructor() {
-        super(OutdoorLightModesField.Options);
-    }
-}
-
-/**
- * Namespace containing options for OutdoorLightModesField.
- */
-namespace OutdoorLightModesField {
-    /**
-     * Options for OutdoorLightModesField, including choices and initial value.
-     */
-    export const Options: StringField.Options<OutdoorLightMode> & { choices: Record<keyof typeof OutdoorLightMode, string> } = {
-        choices: {
-            [OutdoorLightMode.manualGlobalLight]: `${UPPER_MODULE_ID}.outdoorLightModes.manualGlobalLight`,
-            [OutdoorLightMode.globalDarkness]: `${UPPER_MODULE_ID}.outdoorLightModes.globalDarkness`
-        },
-        nullable: true,
-        initial: null
-    }
+export const OutdoorLightModesFieldOptions: EnumFieldOptions<OutdoorLightMode, typeof OutdoorLightMode> = {
+    choices: {
+        [OutdoorLightMode.manualGlobalLight]: `${UPPER_MODULE_ID}.outdoorLightModes.manualGlobalLight`,
+        [OutdoorLightMode.globalDarkness]: `${UPPER_MODULE_ID}.outdoorLightModes.globalDarkness`
+    },
+    nullable: true,
+    initial: null
 }
 
 /**
@@ -49,27 +36,16 @@ export enum OutdoorLightStatus {
 }
 
 /**
- * Field for selecting an outdoor light status.
+ * Options for OutdoorLightStatus Field.
  */
-class OutdoorLightStatusField extends foundry.data.fields.StringField<typeof OutdoorLightStatusField.Options> {
-    constructor() {
-        super(OutdoorLightStatusField.Options);
-    }
-}
-
-/**
- * Namespace containing options for OutdoorLightStatusField.
- */
-namespace OutdoorLightStatusField {
-    export const Options: StringField.Options<OutdoorLightStatus> & { choices: Record<keyof typeof OutdoorLightStatus, string> } = {
-        choices: {
-            [OutdoorLightStatus.bright]: `${UPPER_MODULE_ID}.outdoorLightStatus.bright`,
-            [OutdoorLightStatus.dim]: `${UPPER_MODULE_ID}.outdoorLightStatus.dim`,
-            [OutdoorLightStatus.off]: `${UPPER_MODULE_ID}.outdoorLightStatus.off`
-        },
-        required: true,
-        initial: OutdoorLightStatus.bright
-    }
+export const OutdoorLightStatusFieldOptions: EnumFieldOptions<OutdoorLightStatus, typeof OutdoorLightStatus> = {
+    choices: {
+        [OutdoorLightStatus.bright]: `${UPPER_MODULE_ID}.outdoorLightStatus.bright`,
+        [OutdoorLightStatus.dim]: `${UPPER_MODULE_ID}.outdoorLightStatus.dim`,
+        [OutdoorLightStatus.off]: `${UPPER_MODULE_ID}.outdoorLightStatus.off`
+    },
+    required: true,
+    initial: OutdoorLightStatus.bright
 }
 
 /**
@@ -112,11 +88,11 @@ interface OutdoorSceneFlagsSchema extends DataSchema {
     /**
      * Field for outdoor light mode.
      */
-    [OutdoorSceneFlagNames.outdoorLightMode]: OutdoorLightModesField
+    [OutdoorSceneFlagNames.outdoorLightMode]: EnumField<OutdoorLightMode, typeof OutdoorLightMode>;
     /**
      * Field for outdoor light status.
      */
-    [OutdoorSceneFlagNames.outdoorLightStatus]: OutdoorLightStatusField
+    [OutdoorSceneFlagNames.outdoorLightStatus]: EnumField<OutdoorLightStatus, typeof OutdoorLightStatus>;
 }
 
 /**
@@ -151,8 +127,8 @@ export class OutdoorSceneFlagsDataModel extends foundry.abstract.DataModel<Outdo
      */
     static override defineSchema(): OutdoorSceneFlagsSchema {
         return {
-            [OutdoorSceneFlagNames.outdoorLightMode]: new OutdoorLightModesField(),
-            [OutdoorSceneFlagNames.outdoorLightStatus]: new OutdoorLightStatusField()
+            [OutdoorSceneFlagNames.outdoorLightMode]: new EnumField(OutdoorLightModesFieldOptions),
+            [OutdoorSceneFlagNames.outdoorLightStatus]: new EnumField(OutdoorLightStatusFieldOptions)
         };
     }
 }

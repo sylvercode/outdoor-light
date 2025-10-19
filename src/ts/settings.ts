@@ -1,5 +1,8 @@
 import { MODULE_ID, UPPER_MODULE_ID } from "./constants";
 
+/**
+ * Setting names for the module.
+ */
 enum SettingName {
     changeDefaultLightAttenuation = "changeDefaultLightAttenuation",
     defaultLightAttenuationValue = "defaultLightAttenuationValue",
@@ -8,10 +11,24 @@ enum SettingName {
     defaultWallLightEmissionBright = "defaultWallLightEmissionBright",
 }
 
+/**
+ * Default options for default light attenuation value field.
+ */
 const defaultLightAttenuationValueFieldOptions = { step: 0.05, initial: 0.6 };
+
+/**
+ * Default options for wall light emission dim settings fields.
+ */
 const defaultWallLightEmissionDimFieldOptions = { initial: 4, min: 0 };
+
+/**
+ * Default options for wall light emission bright settings fields.
+ */
 const defaultWallLightEmissionBrightFieldOptions = { initial: 2, min: 0, };
 
+/**
+ * Module augmentation for FVTT setting configuration.
+ */
 declare module "fvtt-types/configuration" {
     interface SettingConfig {
         "outdoor-light.changeDefaultLightAttenuation": foundry.data.fields.BooleanField;
@@ -21,6 +38,9 @@ declare module "fvtt-types/configuration" {
     }
 }
 
+/**
+ * Registers module settings with Foundry VTT.
+ */
 function registerSettings() {
     if (!game.settings) throw new Error("Game settings not initialized");
     if (!game.i18n) throw new Error("Game i18n not initialized");
@@ -81,6 +101,28 @@ class OutdoorLightSettings {
         }
 
         return game.settings.get(MODULE_ID, SettingName.defaultLightAttenuationValue) ?? defaultLightAttenuationValueFieldOptions.initial;
+    }
+
+    /**
+     * Gets the default dim radius for wall light emission.
+     * @returns {number} The default dim radius.
+     */
+    wallLightEmissionDimRadius(): number {
+        if (!game.settings)
+            throw new Error("Game settings not initialized");
+
+        return game.settings.get(MODULE_ID, SettingName.defaultWallLightEmissionDim) ?? defaultWallLightEmissionDimFieldOptions.initial;
+    }
+
+    /**
+     * Gets the default bright radius for wall light emission.
+     * @returns {number} The default bright radius.
+     */
+    wallLightEmissionBrightRadius(): number {
+        if (!game.settings)
+            throw new Error("Game settings not initialized");
+
+        return game.settings.get(MODULE_ID, SettingName.defaultWallLightEmissionBright) ?? defaultWallLightEmissionBrightFieldOptions.initial;
     }
 }
 

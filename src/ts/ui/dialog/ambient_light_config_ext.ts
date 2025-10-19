@@ -2,7 +2,7 @@ import { HookDefinitions } from "fvtt-hook-attacher";
 import type ApplicationV2 from "fvtt-types/src/foundry/client/applications/api/application.mjs";
 import type { DataField } from "fvtt-types/src/foundry/common/data/fields.mjs";
 import AmbientLightConfig from "fvtt-types/src/foundry/client/applications/sheets/ambient-light-config.mjs";
-import { OutdoorLightFlagNames, OutdoorLightFlags, OutdoorLightFlagsDataModel } from "../../data/ambient_light_ext";
+import { OutdoorLightFlagName, OutdoorLightFlags, OutdoorLightFlagsDataModel } from "../../data/ambient_light_ext";
 import applyDefaultOutdoorLightSettings from "../../apps/apply_default_outdoor_light_settings";
 import { AmbientLightProxy } from "../../proxies/ambient_light_proxy";
 
@@ -64,12 +64,12 @@ async function renderAmbientLightConfig(
         );
     };
 
-    const isOutdoorFieldGroup = toFormGroup(OutdoorLightFlagNames.isOutdoor);
+    const isOutdoorFieldGroup = toFormGroup(OutdoorLightFlagName.isOutdoor);
     ConstrainedByWall.after(isOutdoorFieldGroup);
 
     const isOutdoorFieldInput = isOutdoorFieldGroup.querySelector("input") as HTMLInputElement | null;
     if (!isOutdoorFieldInput) {
-        console.error(`Could not find input for ${OutdoorLightFlagNames.isOutdoor}`);
+        console.error(`Could not find input for ${OutdoorLightFlagName.isOutdoor}`);
         return;
     }
 
