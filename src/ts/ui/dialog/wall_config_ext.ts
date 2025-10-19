@@ -1,8 +1,10 @@
 import { HookDefinitions } from "fvtt-hook-attacher";
 import type ApplicationV2 from "fvtt-types/src/foundry/client/applications/api/application.mjs";
-import type { DataField } from "fvtt-types/src/foundry/common/data/fields.mjs";
 import WallConfig from "fvtt-types/src/foundry/client/applications/sheets/wall-config.mjs";
-import { OutdoorWallFlagNames, OutdoorWallFlags, OutdoorWallFlagsDataModel } from "../../data/wall_ext";
+import { LightEmissionDataSchema, LightEmissionKey, LightEmissionSide, LightEmissionUnits, OutdoorWallFlagName, OutdoorWallFlagsDataModel } from "../../data/wall_ext";
+import { renderTemplateHtml } from "src/ts/utils/render_template_html";
+import { outdoorLightSettings } from "src/ts/settings";
+import FieldBuilder from "src/ts/utils/field_builder";
 
 /**
  * Iterable of hook definitions for patching the WallConfig rendering.
@@ -41,14 +43,112 @@ async function renderWallConfig(
 
     const dataModel = new OutdoorWallFlagsDataModel(context.document);
 
-    function toFormGroup(fieldName: keyof OutdoorWallFlags, inputConfig?: { value: any, disabled?: boolean }) {
-        const field = dataModel.schema.fields[fieldName] as DataField<any, any>;
-        return field.toFormGroup(
-            { rootId: context.rootId },
-            inputConfig ?? { value: dataModel[fieldName] }
-        );
-    };
+    const rootFieldBuilder = new FieldBuilder(context.rootId, dataModel.schema.fields, dataModel);
 
-    const isBlockingOutdoorLightFieldGroup = toFormGroup(OutdoorWallFlagNames.isBlockingOutdoorLight);
-    fieldset.append(isBlockingOutdoorLightFieldGroup);
+    const isBlockingOutdoorLightFormGroup = rootFieldBuilder.get(OutdoorWallFlagName.isBlockingOutdoorLight);
+    fieldset.append(isBlockingOutdoorLightFormGroup);
+
+    const lightEmissionFieldSet: HTMLFieldSetElement = await renderTemplateHtml("modules/outdoor-light/templates/light_emission_settings_fieldset.hbs", {});
+    fieldset.append(lightEmissionFieldSet);
+
+    const lightEmissionFieldBuilder = new FieldBuilder(context.rootId, dataModel.schema.fields.lightEmission.fields, dataModel.lightEmission);
+
+    const lightEmissionSide = dataModel.lightEmission?.side ?? LightEmissionSide.none;
+    const lightEmissionSideDisabled = lightEmissionSide === LightEmissionSide.none;
+
+    const lightEmissionSideFieldGroup = lightEmissionFieldBuilder.get(
+        LightEmissionKey.side,
+        { value: lightEmissionSide, localize: true }
+    );
+    changeLabelText(lightEmissionSideFieldGroup, "OUTDOOR-LIGHT.side");
+    lightEmissionFieldSet.append(lightEmissionSideFieldGroup);
+
+    const lightEmissionRadiusFormGroup: HTMLDivElement = await renderTemplateHtml("modules/outdoor-light/templates/light_emission_settings_radius_form_group.hbs", {});
+    lightEmissionFieldSet.append(lightEmissionRadiusFormGroup);
+
+    const lightEmissionDimValue = dataModel.lightEmission?.dim ?? outdoorLightSettings.wallLightEmissionDimRadius();
+    const lightEmissionDimFormGroup = lightEmissionFieldBuilder.get(
+        LightEmissionKey.dim,
+        { disabled: lightEmissionSideDisabled, value: lightEmissionDimValue }
+    );
+    changeLabelText(lightEmissionDimFormGroup, "OUTDOOR-LIGHT.dim");
+    moveLabelAndInputTo(lightEmissionDimFormGroup, lightEmissionRadiusFormGroup);
+
+    const lightEmissionBrightValue = dataModel.lightEmission?.bright ?? outdoorLightSettings.wallLightEmissionBrightRadius();
+    const lightEmissionBrightFormGroup = lightEmissionFieldBuilder.get(
+        LightEmissionKey.bright,
+        { disabled: lightEmissionSideDisabled, value: lightEmissionBrightValue }
+    );
+    changeLabelText(lightEmissionBrightFormGroup, "OUTDOOR-LIGHT.bright");
+    moveLabelAndInputTo(lightEmissionBrightFormGroup, lightEmissionRadiusFormGroup);
+
+    const lightEmissionUnitsFormGroup = lightEmissionFieldBuilder.get(LightEmissionKey.units, { disabled: lightEmissionSideDisabled, localize: true });
+    changeLabelText(lightEmissionUnitsFormGroup, "OUTDOOR-LIGHT.units");
+    lightEmissionFieldSet.append(lightEmissionUnitsFormGroup);
+
+    addEventListenerToSideSelect(dataModel.schema.fields.lightEmission.fields, lightEmissionFieldSet);
+}
+
+/**
+ * Changes the label text of a field group.
+ * @param fieldGroup The field group element.
+ * @param textKey The localization key for the label text.
+ */
+function changeLabelText(fieldGroup: HTMLDivElement, textKey: string) {
+    if (!game.i18n)
+        throw new Error("i18n not found");
+
+    const label = fieldGroup.querySelector('label');
+    if (!label)
+        throw new Error("Label not found in field group");
+
+    label.textContent = game.i18n.localize(textKey);
+}
+
+/**
+ * Moves the label and input elements from the source field group to the target field group.
+ * @param source The source field group element.
+ * @param target The target field group element.
+ */
+function moveLabelAndInputTo(source: HTMLDivElement, target: HTMLDivElement) {
+    const label = source.querySelector('label');
+    const input = source.querySelector('input');
+
+    if (!label || !input) {
+        throw new Error("Label or input not found in source");
+    }
+
+    target.append(label);
+    target.append(input);
+}
+
+/**
+ * Adds an event listener to the side select element to enable/disable related inputs.
+ * @param schema The light emission data schema.
+ * @param fieldSet The field set element containing the inputs.
+ */
+function addEventListenerToSideSelect(
+    schema: LightEmissionDataSchema,
+    fieldSet: HTMLFieldSetElement) {
+    const select = fieldSet.querySelector(`select[name="${schema[LightEmissionKey.side].fieldPath}"]`);
+    const dimInput = fieldSet.querySelector(`input[name="${schema[LightEmissionKey.dim].fieldPath}"]`) as HTMLInputElement;
+    const brightInput = fieldSet.querySelector(`input[name="${schema[LightEmissionKey.bright].fieldPath}"]`) as HTMLInputElement;
+    const unitsInput = fieldSet.querySelector(`select[name="${schema[LightEmissionKey.units].fieldPath}"]`) as HTMLSelectElement;
+    if (!select || !dimInput || !brightInput || !unitsInput) {
+        throw new Error("Missing input elements for light emission settings");
+    }
+
+    select.addEventListener("change", () => {
+        const value = (select as HTMLSelectElement).value as LightEmissionSide;
+        const disabled = value === LightEmissionSide.none;
+        dimInput.disabled = disabled;
+        brightInput.disabled = disabled;
+        unitsInput.disabled = disabled;
+
+        if (!disabled) {
+            dimInput.value ??= outdoorLightSettings.wallLightEmissionDimRadius().toString();
+            brightInput.value ??= outdoorLightSettings.wallLightEmissionBrightRadius().toString();
+            unitsInput.value ??= LightEmissionUnits.wallLengthProportionalRatio;
+        }
+    });
 }

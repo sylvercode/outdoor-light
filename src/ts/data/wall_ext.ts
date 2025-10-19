@@ -1,21 +1,63 @@
 import { MODULE_ID, UPPER_MODULE_ID } from "../constants";
 import type { HookDefinitions } from "fvtt-hook-attacher";
-import type { BooleanField, DataSchema } from "fvtt-types/src/foundry/common/data/fields.mjs";
+import type { BooleanField, DataSchema, NumberField, SchemaField, StringField } from "fvtt-types/src/foundry/common/data/fields.mjs";
 
 /**
  * Enum for wall flag names related to outdoor blocking wall.
  */
-export enum OutdoorWallFlagNames {
+export enum OutdoorWallFlagName {
     isBlockingOutdoorLight = "isBlockingOutdoorLight",
+    lightEmission = "lightEmission"
 }
+
+/**
+ * Enum for light emission data keys.
+ */
+export enum LightEmissionKey {
+    side = "side",
+    dim = "dim",
+    bright = "bright",
+    units = "units"
+}
+
+/**
+ * Enum for light emission sides.
+ */
+export enum LightEmissionSide {
+    none = "none",
+    left = "left",
+    right = "right"
+}
+
+/**
+ * Enum for light emission units.
+ */
+export enum LightEmissionUnits {
+    wallLengthProportionalRatio = "wallLengthProportionalRatio",
+    feets = "feets"
+}
+
+/**
+ * Interface for light emission data.
+ */
+export type LightEmissionData = {
+    [LightEmissionKey.side]?: string;
+    [LightEmissionKey.dim]?: number;
+    [LightEmissionKey.bright]?: number;
+    [LightEmissionKey.units]?: string;
+};
 
 /**
  * Interface for wall flags indicating outdoor blocking wall.
  */
 export interface OutdoorWallFlags {
-    [OutdoorWallFlagNames.isBlockingOutdoorLight]?: boolean;
+    [OutdoorWallFlagName.isBlockingOutdoorLight]?: boolean;
+    [OutdoorWallFlagName.lightEmission]?: LightEmissionData;
 }
 
+/**
+ * Module augmentation for FVTT flag configuration.
+ */
 declare module "fvtt-types/configuration" {
     interface FlagConfig {
         Wall: {
@@ -25,10 +67,54 @@ declare module "fvtt-types/configuration" {
 }
 
 /**
+ * Field options for light emission data schema.
+ */
+const LightEmissionSideFieldOptions: StringField.Options = {
+    choices: {
+        [LightEmissionSide.none]: `${UPPER_MODULE_ID}.LightEmissionSide.${LightEmissionSide.none}`,
+        [LightEmissionSide.left]: `${UPPER_MODULE_ID}.LightEmissionSide.${LightEmissionSide.left}`,
+        [LightEmissionSide.right]: `${UPPER_MODULE_ID}.LightEmissionSide.${LightEmissionSide.right}`
+    },
+    initial: LightEmissionSide.none,
+    required: true
+}
+
+/**
+ * Field options for light emission dim and bright.
+ */
+const LightEmissionDimBrightFieldOptions: NumberField.Options = {
+    min: 0,
+    required: true
+}
+
+/**
+ * Field options for light emission units.
+ */
+const LightEmissionUnitsFieldOptions: StringField.Options = {
+    choices: {
+        [LightEmissionUnits.wallLengthProportionalRatio]: `${UPPER_MODULE_ID}.LightEmissionUnits.${LightEmissionUnits.wallLengthProportionalRatio}`,
+        [LightEmissionUnits.feets]: `${UPPER_MODULE_ID}.LightEmissionUnits.${LightEmissionUnits.feets}`
+    },
+    initial: LightEmissionUnits.wallLengthProportionalRatio,
+    required: true
+}
+
+/**
+ * Data schema for light emission settings.
+ */
+export interface LightEmissionDataSchema extends DataSchema {
+    [LightEmissionKey.side]: StringField<typeof LightEmissionSideFieldOptions>;
+    [LightEmissionKey.dim]: NumberField<typeof LightEmissionDimBrightFieldOptions>;
+    [LightEmissionKey.bright]: NumberField<typeof LightEmissionDimBrightFieldOptions>;
+    [LightEmissionKey.units]: StringField<typeof LightEmissionUnitsFieldOptions>;
+}
+
+/**
  * Data schema for outdoor wall flags.
  */
 interface OutdoorWallFlagsSchema extends DataSchema {
-    [OutdoorWallFlagNames.isBlockingOutdoorLight]: BooleanField
+    [OutdoorWallFlagName.isBlockingOutdoorLight]: BooleanField
+    [OutdoorWallFlagName.lightEmission]: SchemaField<LightEmissionDataSchema>;
 }
 
 /**
@@ -62,7 +148,13 @@ export class OutdoorWallFlagsDataModel extends foundry.abstract.DataModel<Outdoo
      */
     static override defineSchema(): OutdoorWallFlagsSchema {
         return {
-            [OutdoorWallFlagNames.isBlockingOutdoorLight]: new foundry.data.fields.BooleanField()
+            [OutdoorWallFlagName.isBlockingOutdoorLight]: new foundry.data.fields.BooleanField(),
+            [OutdoorWallFlagName.lightEmission]: new foundry.data.fields.SchemaField<LightEmissionDataSchema>({
+                [LightEmissionKey.side]: new foundry.data.fields.StringField(LightEmissionSideFieldOptions),
+                [LightEmissionKey.dim]: new foundry.data.fields.NumberField(LightEmissionDimBrightFieldOptions),
+                [LightEmissionKey.bright]: new foundry.data.fields.NumberField(LightEmissionDimBrightFieldOptions),
+                [LightEmissionKey.units]: new foundry.data.fields.StringField(LightEmissionUnitsFieldOptions)
+            })
         };
     }
 }
@@ -80,7 +172,7 @@ function updateWall(
     _options: WallDocument.Database.UpdateOptions,
     _userId: string,
 ): void {
-    if (change.flags?.[MODULE_ID]?.[OutdoorWallFlagNames.isBlockingOutdoorLight] === undefined)
+    if (change.flags?.[MODULE_ID]?.[OutdoorWallFlagName.isBlockingOutdoorLight] === undefined)
         return;
 
     game.canvas?.perception.update({
