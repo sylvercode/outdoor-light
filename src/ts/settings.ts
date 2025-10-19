@@ -115,8 +115,8 @@ class OutdoorLightSettings {
     }
 
     /**
-     * Gets the default dim radius for wall light emission.
-     * @returns {number} The default dim radius.
+     * Gets the default bright radius for wall light emission.
+     * @returns {number} The default bright radius.
      */
     wallLightEmissionBrightRadius(): number {
         if (!game.settings)

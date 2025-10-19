@@ -146,9 +146,12 @@ function addEventListenerToSideSelect(
         unitsInput.disabled = disabled;
 
         if (!disabled) {
-            dimInput.value ??= outdoorLightSettings.wallLightEmissionDimRadius().toString();
-            brightInput.value ??= outdoorLightSettings.wallLightEmissionBrightRadius().toString();
-            unitsInput.value ??= LightEmissionUnits.wallLengthProportionalRatio;
+            if (!dimInput.value)
+                dimInput.value = outdoorLightSettings.wallLightEmissionDimRadius().toString();
+            if (!brightInput.value)
+                brightInput.value = outdoorLightSettings.wallLightEmissionBrightRadius().toString();
+            if (!unitsInput.value)
+                unitsInput.value = LightEmissionUnits.wallLengthProportionalRatio;
         }
     });
 }

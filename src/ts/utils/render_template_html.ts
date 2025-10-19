@@ -8,5 +8,9 @@ export async function renderTemplateHtml<T extends Element>(templatePath: string
     const template = await foundry.applications.handlebars.renderTemplate(templatePath, data);
     const wrapper = document.createElement("div");
     wrapper.innerHTML = template.trim();
-    return wrapper.firstElementChild as T;
+    const el = wrapper.firstElementChild as T | null;
+    if (!el) {
+        throw new Error(`Template ${templatePath} did not render a root element`);
+    }
+    return el;
 }

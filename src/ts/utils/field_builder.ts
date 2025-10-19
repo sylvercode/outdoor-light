@@ -24,10 +24,10 @@ export default class FieldBuilder<T extends DataSchema> {
      */
     get<TFieldName extends keyof T>(fieldName: TFieldName, inputConfig?: DataField.ToInputConfig<DataField.InitializedTypeFor<T[TFieldName]>>) {
         const field = this.schema[fieldName];
-        inputConfig ??= foundry.utils.mergeObject({ value: this.data[fieldName] }, inputConfig);
+        const config = foundry.utils.mergeObject({ value: this.data[fieldName] }, inputConfig ?? {});
         return field.toFormGroup(
             { rootId: this.rootId },
-            inputConfig
+            config
         );
     }
 }

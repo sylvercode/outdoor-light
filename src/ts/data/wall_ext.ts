@@ -1,6 +1,7 @@
 import { MODULE_ID, UPPER_MODULE_ID } from "../constants";
 import type { HookDefinitions } from "fvtt-hook-attacher";
-import type { BooleanField, DataSchema, NumberField, SchemaField, StringField } from "fvtt-types/src/foundry/common/data/fields.mjs";
+import type { BooleanField, DataSchema, NumberField, SchemaField } from "fvtt-types/src/foundry/common/data/fields.mjs";
+import { EnumField, EnumFieldOptions } from "../utils/enum_field";
 
 /**
  * Enum for wall flag names related to outdoor blocking wall.
@@ -41,10 +42,10 @@ export enum LightEmissionUnits {
  * Interface for light emission data.
  */
 export type LightEmissionData = {
-    [LightEmissionKey.side]?: string;
+    [LightEmissionKey.side]?: LightEmissionSide;
     [LightEmissionKey.dim]?: number;
     [LightEmissionKey.bright]?: number;
-    [LightEmissionKey.units]?: string;
+    [LightEmissionKey.units]?: LightEmissionUnits;
 };
 
 /**
@@ -69,7 +70,7 @@ declare module "fvtt-types/configuration" {
 /**
  * Field options for light emission data schema.
  */
-const LightEmissionSideFieldOptions: StringField.Options = {
+const LightEmissionSideFieldOptions: EnumFieldOptions<LightEmissionSide, typeof LightEmissionSide> = {
     choices: {
         [LightEmissionSide.none]: `${UPPER_MODULE_ID}.LightEmissionSide.${LightEmissionSide.none}`,
         [LightEmissionSide.left]: `${UPPER_MODULE_ID}.LightEmissionSide.${LightEmissionSide.left}`,
@@ -90,7 +91,7 @@ const LightEmissionDimBrightFieldOptions: NumberField.Options = {
 /**
  * Field options for light emission units.
  */
-const LightEmissionUnitsFieldOptions: StringField.Options = {
+const LightEmissionUnitsFieldOptions: EnumFieldOptions<LightEmissionUnits, typeof LightEmissionUnits> = {
     choices: {
         [LightEmissionUnits.wallLengthProportionalRatio]: `${UPPER_MODULE_ID}.LightEmissionUnits.${LightEmissionUnits.wallLengthProportionalRatio}`,
         [LightEmissionUnits.feets]: `${UPPER_MODULE_ID}.LightEmissionUnits.${LightEmissionUnits.feets}`
@@ -103,10 +104,10 @@ const LightEmissionUnitsFieldOptions: StringField.Options = {
  * Data schema for light emission settings.
  */
 export interface LightEmissionDataSchema extends DataSchema {
-    [LightEmissionKey.side]: StringField<typeof LightEmissionSideFieldOptions>;
+    [LightEmissionKey.side]: EnumField<LightEmissionSide, typeof LightEmissionSide>;
     [LightEmissionKey.dim]: NumberField<typeof LightEmissionDimBrightFieldOptions>;
     [LightEmissionKey.bright]: NumberField<typeof LightEmissionDimBrightFieldOptions>;
-    [LightEmissionKey.units]: StringField<typeof LightEmissionUnitsFieldOptions>;
+    [LightEmissionKey.units]: EnumField<LightEmissionUnits, typeof LightEmissionUnits>;
 }
 
 /**
@@ -150,10 +151,10 @@ export class OutdoorWallFlagsDataModel extends foundry.abstract.DataModel<Outdoo
         return {
             [OutdoorWallFlagName.isBlockingOutdoorLight]: new foundry.data.fields.BooleanField(),
             [OutdoorWallFlagName.lightEmission]: new foundry.data.fields.SchemaField<LightEmissionDataSchema>({
-                [LightEmissionKey.side]: new foundry.data.fields.StringField(LightEmissionSideFieldOptions),
+                [LightEmissionKey.side]: new EnumField(LightEmissionSideFieldOptions),
                 [LightEmissionKey.dim]: new foundry.data.fields.NumberField(LightEmissionDimBrightFieldOptions),
                 [LightEmissionKey.bright]: new foundry.data.fields.NumberField(LightEmissionDimBrightFieldOptions),
-                [LightEmissionKey.units]: new foundry.data.fields.StringField(LightEmissionUnitsFieldOptions)
+                [LightEmissionKey.units]: new EnumField(LightEmissionUnitsFieldOptions)
             })
         };
     }
