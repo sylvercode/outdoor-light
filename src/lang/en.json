@@ -4,6 +4,10 @@
       "FIELDS": {
         "isOutdoor": {
           "label": "Is Outdoor"
+        },
+        "emissionWallId": {
+          "label": "Emission Wall ID",
+          "hint": "The ID of the wall that emits light for this light."
         }
       }
     },
@@ -26,6 +30,10 @@
           "units": {
             "label": "Light Emission Units",
             "hint": "Determines the units used for light emission measurements. \"Wall Length Proportional Ratio\" scales with wall length, while \"Feets\" uses fixed distance."
+          },
+          "lightId": {
+            "label": "Associated Light ID",
+            "hint": "The ID of the outdoor light associated with this wall for emission purposes."
           }
         }
       }
