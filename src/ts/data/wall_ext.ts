@@ -2,6 +2,7 @@ import { MODULE_ID, UPPER_MODULE_ID } from "../constants";
 import type { HookDefinitions } from "fvtt-hook-attacher";
 import type { BooleanField, DataSchema, NumberField, SchemaField, StringField } from "fvtt-types/src/foundry/common/data/fields.mjs";
 import { EnumField, EnumFieldOptions } from "../utils/enum_field";
+import updateWallLightEmission from "../apps/update_wall_light_emission";
 
 /**
  * Enum for wall flag names related to outdoor blocking wall.
@@ -47,7 +48,7 @@ export type LightEmissionData = {
     [LightEmissionKey.dim]?: number;
     [LightEmissionKey.bright]?: number;
     [LightEmissionKey.units]?: LightEmissionUnits;
-    [LightEmissionKey.lightId]?: string;
+    [LightEmissionKey.lightId]?: string | null;
 };
 
 /**
@@ -171,21 +172,47 @@ export class OutdoorWallFlagsDataModel extends foundry.abstract.DataModel<Outdoo
  * @param _options The update options.
  * @param _userId The ID of the user performing the update.
  */
-function updateWall(
-    _document: WallDocument,
+async function updateWall(
+    document: WallDocument,
     change: WallDocument.UpdateData,
     _options: WallDocument.Database.UpdateOptions,
     _userId: string,
-): void {
-    if (change.flags?.[MODULE_ID]?.[OutdoorWallFlagName.isBlockingOutdoorLight] === undefined)
-        return;
+): Promise<void> {
+    if (change.flags?.[MODULE_ID]?.isBlockingOutdoorLight !== undefined) {
+        game.canvas?.perception.update({
+            refreshEdges: true,         // Recompute edge intersections
+            initializeLighting: true,   // Recompute light sources
+            initializeVision: true,     // Recompute vision sources
+            initializeSounds: true      // Recompute sound sources
+        });
+    }
 
-    game.canvas?.perception.update({
-        refreshEdges: true,         // Recompute edge intersections
-        initializeLighting: true,   // Recompute light sources
-        initializeVision: true,     // Recompute vision sources
-        initializeSounds: true      // Recompute sound sources
-    });
+    const mustUpdateLightEmission = (() => {
+        const lightEmissionFlag = change.flags?.[MODULE_ID]?.lightEmission;
+        if (lightEmissionFlag)
+            return true;
+
+        const side = document?.flags?.[MODULE_ID]?.lightEmission?.side ?? LightEmissionSide.none;
+        if (side !== LightEmissionSide.none && change.c)
+            return true;
+
+        return false;
+    })();
+    if (mustUpdateLightEmission) {
+        const lightId = await updateWallLightEmission(document);
+        const idInWall = document.flags[MODULE_ID]?.lightEmission!.lightId;
+        if (idInWall !== lightId) {
+            await document.update({
+                flags: {
+                    [MODULE_ID]: {
+                        lightEmission: {
+                            lightId: lightId
+                        }
+                    }
+                }
+            });
+        }
+    }
 }
 
 /**
