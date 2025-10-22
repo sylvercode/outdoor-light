@@ -73,7 +73,7 @@ async function renderAmbientLightConfig(
         return;
     }
 
-    const ambientLightProxy = new AmbientLightAppConfigProxy(content, context.document.parent);
+    const ambientLightProxy = new AmbientLightAppConfigProxy(content, context.document.parent, dataModel.emissionWallId);
     isOutdoorFieldInput.addEventListener("change", async () => {
         if (!isOutdoorFieldInput.checked)
             return;
@@ -88,7 +88,8 @@ async function renderAmbientLightConfig(
 class AmbientLightAppConfigProxy implements AmbientLightProxy {
     constructor(
         private content: Element,
-        private scene: Scene
+        private scene: Scene,
+        private emissionWallId: string | null = null
     ) { }
 
     /**
@@ -118,7 +119,7 @@ class AmbientLightAppConfigProxy implements AmbientLightProxy {
             console.error('Could not find input[name="config.bright"]');
             return;
         }
-        brightInput.value = String(bright);
+        brightInput.value = Number.isFinite(bright) ? bright.toFixed(2) : String(bright);
     }
     /**
      * @inheritdoc
@@ -140,7 +141,7 @@ class AmbientLightAppConfigProxy implements AmbientLightProxy {
             console.error('Could not find input[name="config.dim"]');
             return;
         }
-        dimInput.value = String(dim);
+        dimInput.value = Number.isFinite(dim) ? dim.toFixed(2) : String(dim);
     }
     /**
      * @inheritdoc
@@ -185,5 +186,11 @@ class AmbientLightAppConfigProxy implements AmbientLightProxy {
             return;
         }
         attenuationInput.value = String(attenuation);
+    }
+    /**
+     * @inheritdoc
+     */
+    getEmissionWallId(): string | null {
+        return this.emissionWallId;
     }
 }

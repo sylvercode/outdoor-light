@@ -193,10 +193,10 @@ async function updateWall(
             return true;
 
         const side = document?.flags?.[MODULE_ID]?.lightEmission?.side ?? LightEmissionSide.none;
-        if (side !== LightEmissionSide.none && change.c)
-            return true;
+        if (side === LightEmissionSide.none)
+            return false;
 
-        return false;
+        return change.c !== undefined || change.door !== undefined || change.ds !== undefined;
     })();
     if (mustUpdateLightEmission) {
         const lightId = await updateWallLightEmission(document);
@@ -216,6 +216,17 @@ async function updateWall(
 }
 
 /**
+ * Callback for the deleteWall hook, deletes the associated light emission ambient light if it exists.
+ * @param document The wall document being deleted.
+ */
+async function deleteWall(document: WallDocument) {
+    const outdoorWallFlags = new OutdoorWallFlagsDataModel(document);
+    const lightId = outdoorWallFlags.lightEmission?.lightId;
+    if (lightId)
+        document.parent?.deleteEmbeddedDocuments("AmbientLight", [lightId]);
+}
+
+/**
  * Iterable of hook definitions for this data model.
  */
 export const HOOKS_DEFINITIONS: Iterable<HookDefinitions> = [{
@@ -227,6 +238,10 @@ export const HOOKS_DEFINITIONS: Iterable<HookDefinitions> = [{
         {
             name: "updateWall",
             callback: updateWall
+        },
+        {
+            name: "deleteWall",
+            callback: deleteWall
         }
     ]
 }];

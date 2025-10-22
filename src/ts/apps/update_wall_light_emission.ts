@@ -1,5 +1,9 @@
-import { LightEmissionSide, LightEmissionUnits, OutdoorWallFlagsDataModel } from "../data/wall_ext";
-import { outdoorLightSettings } from "../settings";
+import { MODULE_ID } from "../constants";
+import { OutdoorLightFlagName } from "../data/ambient_light_ext";
+import { LightEmissionSide, OutdoorWallFlagsDataModel } from "../data/wall_ext";
+import { AmbientLightProxy } from "../proxies/ambient_light_proxy";
+import wallCoordAsRay from "../utils/wall_doc_as_ray";
+import applyDefaultOutdoorLightSettings from "./apply_default_outdoor_light_settings";
 
 /**
  * Updates or creates the light emission ambient light for a wall based on its outdoor wall flags.
@@ -27,27 +31,27 @@ export default async function updateWallLightEmission(wall: WallDocument): Promi
         return null;
     }
 
-    const ray = getWallRay(wall);
+    const ray = wallCoordAsRay(wall.c);
     const center = getRayCenter(ray);
-    const lightRadius = getLightRadius(ray, outdoorWallFlags, wall.parent.dimensions.distancePixels);
     const rotationDegrees = getRotationDegrees(lightSide === LightEmissionSide.left, ray);
 
-    const lightData: AmbientLightDocument.UpdateData = {
+    const lightData: AmbientLightUpdateDataWithEmissionWallId = {
         x: center.x,
         y: center.y,
         config: {
-            angle: 180,
-            dim: lightRadius.dim,
-            bright: lightRadius.bright,
+            angle: 180
         },
 
         rotation: rotationDegrees,
         flags: {
-            "outdoor-light": {
+            [MODULE_ID]: {
                 emissionWallId: wall.id,
             },
         },
     };
+
+    const updateDataProxy = new AmbientLightUpdateData(lightData, wall.parent);
+    applyDefaultOutdoorLightSettings(updateDataProxy);
 
     if (light) {
         await light.update(lightData);
@@ -73,15 +77,6 @@ function getRotationDegrees(isLeft: boolean, ray: Ray): number {
 }
 
 /**
- * Creates a Ray object representing the wall's position.
- * @param wall The wall document.
- * @returns A Ray object representing the wall.
- */
-function getWallRay(wall: WallDocument): foundry.canvas.geometry.Ray {
-    return new foundry.canvas.geometry.Ray({ x: wall.c[0], y: wall.c[1] }, { x: wall.c[2], y: wall.c[3] });
-}
-
-/**
  * Calculates the center point of a ray.
  * @param ray The ray to calculate the center point for.
  * @returns The center point of the ray.
@@ -93,25 +88,50 @@ function getRayCenter(ray: foundry.canvas.geometry.Ray): Canvas.Point {
 }
 
 /**
- * Calculates the light radius based on the wall's ray and outdoor wall flags.
- * @param ray The ray representing the wall.
- * @param outdoorWallFlags The outdoor wall flags data model.
- * @param distancePixels The distance in pixels for scaling.
- * @returns An object containing the dim and bright radius values.
+ * Type alias for AmbientLightDocument update data with emission wall ID flag defined.
  */
-function getLightRadius(ray: Ray, outdoorWallFlags: OutdoorWallFlagsDataModel, distancePixels: number): { dim: number; bright: number } {
-    if (outdoorWallFlags.lightEmission?.units === LightEmissionUnits.feets) {
-        return {
-            dim: outdoorWallFlags.lightEmission?.dim ?? 0,
-            bright: outdoorWallFlags.lightEmission?.bright ?? 0,
-        };
+type AmbientLightUpdateDataWithEmissionWallId = AmbientLightDocument.UpdateData & { flags: { [MODULE_ID]: { [OutdoorLightFlagName.emissionWallId]: string } } };
+
+class AmbientLightUpdateData implements AmbientLightProxy {
+    constructor(private data: AmbientLightUpdateDataWithEmissionWallId,
+        private Scene: Scene
+    ) { }
+
+    getScene(): Scene {
+        return this.Scene;
+    }
+    getBright(): number {
+        return this.data.config?.bright ?? 0;
+    }
+    setBright(bright: number): void {
+        const config = this.data.config ??= {};
+        config.bright = bright;
+    }
+    getDim(): number {
+        return this.data.config?.dim ?? 0;
+    }
+    setDim(dim: number): void {
+        const config = this.data.config ??= {};
+        config.dim = dim;
+    }
+    setHidden(hidden: boolean): void {
+        this.data.hidden = hidden;
+    }
+    setLuminosity(luminosity: number): void {
+        const config = this.data.config ??= {};
+        config.luminosity = luminosity;
+    }
+    setDarknessMax(max: number): void {
+        const config = this.data.config ??= {};
+        config.darkness = config.darkness ?? {};
+        config.darkness.max = max;
+    }
+    setAttenuation(attenuation: number): void {
+        const config = this.data.config ??= {};
+        config.attenuation = attenuation;
     }
 
-    const wallLength = (ray.distance / distancePixels);
-    const dimRatio = outdoorWallFlags.lightEmission?.dim ?? outdoorLightSettings.wallLightEmissionDimRadius();
-    const brightRatio = outdoorWallFlags.lightEmission?.bright ?? outdoorLightSettings.wallLightEmissionBrightRadius();
-    return {
-        dim: wallLength * dimRatio,
-        bright: wallLength * brightRatio,
-    };
+    getEmissionWallId(): string | null {
+        return this.data.flags[MODULE_ID].emissionWallId;
+    }
 }
