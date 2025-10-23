@@ -2,7 +2,7 @@ import { HookDefinitions } from "fvtt-hook-attacher";
 import type SceneControls from "fvtt-types/src/foundry/client/applications/ui/scene-controls.mjs";
 import getToolOrderInsertionSequence from "../../utils/get_tool_order_insertion_sequence";
 import { getChangeLightStatusTool } from "./change_light_status";
-import getToggleOutdoorLayer from "./toogle_outdoor_layer";
+import getToggleOutdoorLayer from "./toggle_outdoor_layer";
 
 /**
  * Iterable of hook definitions for tools addition.

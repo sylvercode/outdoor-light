@@ -7,7 +7,7 @@ import { outdoorLightSettings } from "src/ts/settings";
 
 
 /**
- * Name of the new tool to be added.
+ * Name of the new tool to be added.ggit push
  */
 const TOGGLE_OUTDOOR_LAYER_TOOL_NAME = "toggleOutdoorLayer";
 /**
@@ -56,7 +56,7 @@ function refreshAmbientLightControlIconVisibility(light: AmbientLight): void {
     const isOutdoor = light.document.flags[MODULE_ID]?.isOutdoor ?? false;
     const controlIcon = light.controlIcon;
     if (controlIcon)
-        controlIcon.visible = isOutdoor == isOutdoorLayerActive();
+        controlIcon.visible = isOutdoor === isOutdoorLayerActive();
 }
 
 /**
@@ -111,7 +111,7 @@ export const HOOKS_DEFINITIONS: Iterable<HookDefinitions> = [{
 /**
  * Iterable of wrapper patch definitions for tools behavior injection.
  */
-export const LIBWRAPPER_PATCHS: Iterable<LibWrapperWrapperDefinitions> = [
+export const LIBWRAPPER_PATCHES: Iterable<LibWrapperWrapperDefinitions> = [
     {
         target: "foundry.canvas.layers.LightingLayer.prototype._onDragLeftDrop",
         fn: LightingLayer_onDragLeftDrop_Wrapper,

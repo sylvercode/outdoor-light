@@ -8,7 +8,7 @@ import * as OutdoorWallFlagsDataModel from "./data/wall_ext";
 import * as OutdoorSceneFlagsDataModel from "./data/scene_ext";
 import * as ClockwiseSweepPolygonPatch from "./apps/clockwise_sweep_polygon_ext";
 import * as LightingLayerTools from "./ui/tools/lighting_layer_tools_ext";
-import * as ToggleOutdoorLayer from "./ui/tools/toogle_outdoor_layer";
+import * as ToggleOutdoorLayer from "./ui/tools/toggle_outdoor_layer";
 import * as WallsLayerTools from "./ui/tools/walls_layer_tools_ext";
 import * as settings from "./settings";
 
@@ -40,10 +40,10 @@ export class OutdoorLightModuleHooks {
   /**
    * Iterable of libWrapper patch definitions to be registered.
    */
-  static LIBWRAPPER_PATCHS: Iterable<LibWrapperWrapperDefinitions> = [
-    ...ClockwiseSweepPolygonPatch.LIBWRAPPER_PATCHS,
-    ...WallsLayerTools.LIBWRAPPER_PATCHS,
-    ...ToggleOutdoorLayer.LIBWRAPPER_PATCHS,
+  static LIBWRAPPER_PATCHES: Iterable<LibWrapperWrapperDefinitions> = [
+    ...ClockwiseSweepPolygonPatch.LIBWRAPPER_PATCHES,
+    ...WallsLayerTools.LIBWRAPPER_PATCHES,
+    ...ToggleOutdoorLayer.LIBWRAPPER_PATCHES,
   ];
 
   /**

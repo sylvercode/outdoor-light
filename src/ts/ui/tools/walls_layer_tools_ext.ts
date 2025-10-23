@@ -17,7 +17,7 @@ export const HOOKS_DEFINITIONS: Iterable<HookDefinitions> = [{
 /**
  * Iterable of wrapper patch definitions for tools behavior injection.
  */
-export const LIBWRAPPER_PATCHS: Iterable<LibWrapperWrapperDefinitions> = [
+export const LIBWRAPPER_PATCHES: Iterable<LibWrapperWrapperDefinitions> = [
     {
         target: "foundry.canvas.layers.WallsLayer.prototype._onDragLeftDrop",
         fn: WallsLayer_onDragLeftDrop_Wrapper,
