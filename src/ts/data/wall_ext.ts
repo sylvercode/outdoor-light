@@ -172,14 +172,18 @@ async function updateWall(
         await syncWallLightEmissionId(document, lightId);
     }
 
-    if (change.flags?.[MODULE_ID]?.isBlockingOutdoorLight !== undefined) {
-        game.canvas?.perception.update({
-            refreshEdges: true,         // Recompute edge intersections
-            initializeLighting: true,   // Recompute light sources
-            initializeVision: true,     // Recompute vision sources
-            initializeSounds: true      // Recompute sound sources
-        });
+    if (mustUpdateLightEmission || change.flags?.[MODULE_ID]?.isBlockingOutdoorLight !== undefined) {
+        updatePerception();
     }
+}
+
+function updatePerception() {
+    game.canvas?.perception.update({
+        refreshEdges: true,         // Recompute edge intersections
+        initializeLighting: true,   // Recompute light sources
+        initializeVision: true,     // Recompute vision sources
+        initializeSounds: true      // Recompute sound sources
+    });
 }
 
 async function syncWallLightEmissionId(document: WallDocument, lightId: string | null) {
@@ -214,6 +218,9 @@ async function createWall(
     _userId: string) {
     const lightId = await updateWallLightEmission(document);
     await syncWallLightEmissionId(document, lightId);
+
+    if (lightId)
+        updatePerception();
 }
 
 /**

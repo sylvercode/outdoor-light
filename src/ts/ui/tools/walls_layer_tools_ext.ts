@@ -97,4 +97,9 @@ function WallsLayer_onDragLeftDrop(event: Canvas.Event.Pointer<Wall>): void {
     // Use foundry use the _source to create the document, so we need to set the flag there.
     const outdoorFlags = wallDoc._source.flags[MODULE_ID] ??= {};
     outdoorFlags.isBlockingOutdoorLight = true;
+    const enabledLight = wallDoc.door !== CONST.WALL_DOOR_TYPES.NONE
+        || wallDoc.light == CONST.WALL_SENSE_TYPES.NONE
+        || wallDoc.light == CONST.WALL_SENSE_TYPES.PROXIMITY;
+    if (enabledLight)
+        outdoorFlags.lightEmission = { enabled: true };
 }
