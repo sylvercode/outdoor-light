@@ -4,6 +4,10 @@
       "FIELDS": {
         "isOutdoor": {
           "label": "Is Outdoor"
+        },
+        "emissionWallId": {
+          "label": "Emission Wall ID",
+          "hint": "The ID of the wall that emits light for this light."
         }
       }
     },
@@ -13,9 +17,8 @@
           "label": "Is Blocking Outdoor Light"
         },
         "lightEmission": {
-          "side": {
-            "label": "Light Emission Side",
-            "hint": "Enable light emission on one side of the wall."
+          "enabled": {
+            "label": "Emit light"
           },
           "dim": {
             "label": "Light Emission Dim"
@@ -26,6 +29,10 @@
           "units": {
             "label": "Light Emission Units",
             "hint": "Determines the units used for light emission measurements. \"Wall Length Proportional Ratio\" scales with wall length, while \"Feets\" uses fixed distance."
+          },
+          "lightId": {
+            "label": "Associated Light ID",
+            "hint": "The ID of the outdoor light associated with this wall for emission purposes."
           }
         }
       }
@@ -50,11 +57,6 @@
       "off": "Off",
       "dim": "Dim",
       "bright": "Bright"
-    },
-    "LightEmissionSide": {
-      "none": "None",
-      "left": "Left",
-      "right": "Right"
     },
     "LightEmissionUnits": {
       "wallLengthProportionalRatio": "Wall Length Proportional Ratio",
@@ -95,7 +97,6 @@
     },
     "LightEmissionSettingsLegend": "Light Emission Settings",
     "radius": "Radius",
-    "side": "Side",
     "dim": "Dim",
     "bright": "Bright",
     "units": "Units"

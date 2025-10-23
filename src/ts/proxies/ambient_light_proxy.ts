@@ -1,3 +1,4 @@
+import { MODULE_ID } from "../constants";
 
 /**
  * Proxy type for an AmbientLight object, exposing only the methods used by Outdoor Light.
@@ -37,6 +38,11 @@ export type AmbientLightProxy = {
      * Sets the attenuation of the light (aka AmbientLightDocument.config.attenuation).
      */
     setAttenuation(attenuation: number): void;
+
+    /**
+     * Get emission wall id.
+     */
+    getEmissionWallId(): string | null;
 };
 
 /**
@@ -104,5 +110,12 @@ export class AmbientLightDocumentProxy implements AmbientLightProxy {
      */
     setAttenuation(attenuation: number) {
         this.lightDoc.config.attenuation = attenuation;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    getEmissionWallId(): string | null {
+        return this.lightDoc.flags[MODULE_ID]?.emissionWallId ?? null;
     }
 }

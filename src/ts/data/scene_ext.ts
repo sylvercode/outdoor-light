@@ -153,7 +153,7 @@ function updateScene(
 
     scene.lights.forEach(light => {
         const lightOutdoorFlag = new OutdoorLightFlagsDataModel(light);
-        if (!lightOutdoorFlag.isOutdoor)
+        if (!lightOutdoorFlag.isOutdoor && !lightOutdoorFlag.emissionWallId)
             return;
 
         const ambientLightProxy = new AmbientLightDocumentUpdateDataProxy(light as AmbientLightDocWithParent);

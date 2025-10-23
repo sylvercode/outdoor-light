@@ -1,12 +1,13 @@
 import { MODULE_ID, UPPER_MODULE_ID } from "../constants";
 import type { HookDefinitions } from "fvtt-hook-attacher";
-import type { BooleanField, DataSchema } from "fvtt-types/src/foundry/common/data/fields.mjs";
+import type { BooleanField, DataSchema, StringField } from "fvtt-types/src/foundry/common/data/fields.mjs";
 
 /**
  * Enum for outdoor ambient light flag names.
  */
 export enum OutdoorLightFlagName {
     isOutdoor = "isOutdoor",
+    emissionWallId = "emissionWallId"
 }
 
 /**
@@ -14,6 +15,7 @@ export enum OutdoorLightFlagName {
  */
 export interface OutdoorLightFlags {
     [OutdoorLightFlagName.isOutdoor]?: boolean;
+    [OutdoorLightFlagName.emissionWallId]?: string;
 }
 
 declare module "fvtt-types/configuration" {
@@ -29,6 +31,7 @@ declare module "fvtt-types/configuration" {
  */
 interface OutdoorLightFlagsSchema extends DataSchema {
     [OutdoorLightFlagName.isOutdoor]: BooleanField
+    [OutdoorLightFlagName.emissionWallId]: StringField
 }
 
 /**
@@ -62,7 +65,8 @@ export class OutdoorLightFlagsDataModel extends foundry.abstract.DataModel<Outdo
      */
     static override defineSchema(): OutdoorLightFlagsSchema {
         return {
-            [OutdoorLightFlagName.isOutdoor]: new foundry.data.fields.BooleanField()
+            [OutdoorLightFlagName.isOutdoor]: new foundry.data.fields.BooleanField(),
+            [OutdoorLightFlagName.emissionWallId]: new foundry.data.fields.StringField()
         };
     }
 }

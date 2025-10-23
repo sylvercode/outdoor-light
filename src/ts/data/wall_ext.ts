@@ -1,7 +1,8 @@
 import { MODULE_ID, UPPER_MODULE_ID } from "../constants";
 import type { HookDefinitions } from "fvtt-hook-attacher";
-import type { BooleanField, DataSchema, NumberField, SchemaField } from "fvtt-types/src/foundry/common/data/fields.mjs";
+import type { BooleanField, DataSchema, NumberField, SchemaField, StringField } from "fvtt-types/src/foundry/common/data/fields.mjs";
 import { EnumField, EnumFieldOptions } from "../utils/enum_field";
+import updateWallLightEmission from "../apps/update_wall_light_emission";
 
 /**
  * Enum for wall flag names related to outdoor blocking wall.
@@ -15,19 +16,11 @@ export enum OutdoorWallFlagName {
  * Enum for light emission data keys.
  */
 export enum LightEmissionKey {
-    side = "side",
+    enabled = "enabled",
     dim = "dim",
     bright = "bright",
-    units = "units"
-}
-
-/**
- * Enum for light emission sides.
- */
-export enum LightEmissionSide {
-    none = "none",
-    left = "left",
-    right = "right"
+    units = "units",
+    lightId = "lightId"
 }
 
 /**
@@ -42,10 +35,11 @@ export enum LightEmissionUnits {
  * Interface for light emission data.
  */
 export type LightEmissionData = {
-    [LightEmissionKey.side]?: LightEmissionSide;
+    [LightEmissionKey.enabled]?: boolean;
     [LightEmissionKey.dim]?: number;
     [LightEmissionKey.bright]?: number;
     [LightEmissionKey.units]?: LightEmissionUnits;
+    [LightEmissionKey.lightId]?: string | null;
 };
 
 /**
@@ -65,19 +59,6 @@ declare module "fvtt-types/configuration" {
             [MODULE_ID]?: OutdoorWallFlags;
         };
     }
-}
-
-/**
- * Field options for light emission data schema.
- */
-const LightEmissionSideFieldOptions: EnumFieldOptions<LightEmissionSide, typeof LightEmissionSide> = {
-    choices: {
-        [LightEmissionSide.none]: `${UPPER_MODULE_ID}.LightEmissionSide.${LightEmissionSide.none}`,
-        [LightEmissionSide.left]: `${UPPER_MODULE_ID}.LightEmissionSide.${LightEmissionSide.left}`,
-        [LightEmissionSide.right]: `${UPPER_MODULE_ID}.LightEmissionSide.${LightEmissionSide.right}`
-    },
-    initial: LightEmissionSide.none,
-    required: true
 }
 
 /**
@@ -104,10 +85,11 @@ const LightEmissionUnitsFieldOptions: EnumFieldOptions<LightEmissionUnits, typeo
  * Data schema for light emission settings.
  */
 export interface LightEmissionDataSchema extends DataSchema {
-    [LightEmissionKey.side]: EnumField<LightEmissionSide, typeof LightEmissionSide>;
+    [LightEmissionKey.enabled]: BooleanField;
     [LightEmissionKey.dim]: NumberField<typeof LightEmissionDimBrightFieldOptions>;
     [LightEmissionKey.bright]: NumberField<typeof LightEmissionDimBrightFieldOptions>;
     [LightEmissionKey.units]: EnumField<LightEmissionUnits, typeof LightEmissionUnits>;
+    [LightEmissionKey.lightId]: StringField;
 }
 
 /**
@@ -151,10 +133,11 @@ export class OutdoorWallFlagsDataModel extends foundry.abstract.DataModel<Outdoo
         return {
             [OutdoorWallFlagName.isBlockingOutdoorLight]: new foundry.data.fields.BooleanField(),
             [OutdoorWallFlagName.lightEmission]: new foundry.data.fields.SchemaField<LightEmissionDataSchema>({
-                [LightEmissionKey.side]: new EnumField(LightEmissionSideFieldOptions),
+                [LightEmissionKey.enabled]: new foundry.data.fields.BooleanField(),
                 [LightEmissionKey.dim]: new foundry.data.fields.NumberField(LightEmissionDimBrightFieldOptions),
                 [LightEmissionKey.bright]: new foundry.data.fields.NumberField(LightEmissionDimBrightFieldOptions),
-                [LightEmissionKey.units]: new EnumField(LightEmissionUnitsFieldOptions)
+                [LightEmissionKey.units]: new EnumField(LightEmissionUnitsFieldOptions),
+                [LightEmissionKey.lightId]: new foundry.data.fields.StringField()
             })
         };
     }
@@ -167,21 +150,77 @@ export class OutdoorWallFlagsDataModel extends foundry.abstract.DataModel<Outdoo
  * @param _options The update options.
  * @param _userId The ID of the user performing the update.
  */
-function updateWall(
-    _document: WallDocument,
+async function updateWall(
+    document: WallDocument,
     change: WallDocument.UpdateData,
     _options: WallDocument.Database.UpdateOptions,
     _userId: string,
-): void {
-    if (change.flags?.[MODULE_ID]?.[OutdoorWallFlagName.isBlockingOutdoorLight] === undefined)
-        return;
+): Promise<void> {
+    const mustUpdateLightEmission = (() => {
+        const lightEmissionFlag = change.flags?.[MODULE_ID]?.lightEmission;
+        if (lightEmissionFlag)
+            return true;
 
+        const enabled = document.flags?.[MODULE_ID]?.lightEmission?.enabled;
+        if (!enabled)
+            return false;
+
+        return change.c !== undefined || change.door !== undefined || change.ds !== undefined;
+    })();
+    if (mustUpdateLightEmission) {
+        const lightId = await updateWallLightEmission(document);
+        await syncWallLightEmissionId(document, lightId);
+    }
+
+    if (mustUpdateLightEmission || change.flags?.[MODULE_ID]?.isBlockingOutdoorLight !== undefined) {
+        updatePerception();
+    }
+}
+
+function updatePerception() {
     game.canvas?.perception.update({
         refreshEdges: true,         // Recompute edge intersections
         initializeLighting: true,   // Recompute light sources
         initializeVision: true,     // Recompute vision sources
         initializeSounds: true      // Recompute sound sources
     });
+}
+
+async function syncWallLightEmissionId(document: WallDocument, lightId: string | null) {
+    const idInWall = document.flags[MODULE_ID]?.lightEmission?.lightId;
+    if (idInWall !== lightId) {
+        await document.update({
+            flags: {
+                [MODULE_ID]: {
+                    lightEmission: {
+                        lightId: lightId
+                    }
+                }
+            }
+        });
+    }
+}
+
+/**
+ * Callback for the deleteWall hook, deletes the associated light emission ambient light if it exists.
+ * @param document The wall document being deleted.
+ */
+async function deleteWall(document: WallDocument) {
+    const outdoorWallFlags = new OutdoorWallFlagsDataModel(document);
+    const lightId = outdoorWallFlags.lightEmission?.lightId;
+    if (lightId)
+        document.parent?.deleteEmbeddedDocuments("AmbientLight", [lightId]);
+}
+
+async function createWall(
+    document: WallDocument,
+    _options: WallDocument.Database.CreateOptions,
+    _userId: string) {
+    const lightId = await updateWallLightEmission(document);
+    await syncWallLightEmissionId(document, lightId);
+
+    if (lightId)
+        updatePerception();
 }
 
 /**
@@ -194,8 +233,16 @@ export const HOOKS_DEFINITIONS: Iterable<HookDefinitions> = [{
             callback: OutdoorWallFlagsDataModel.i18nInit
         },
         {
+            name: "createWall",
+            callback: createWall
+        },
+        {
             name: "updateWall",
             callback: updateWall
+        },
+        {
+            name: "deleteWall",
+            callback: deleteWall
         }
     ]
 }];
