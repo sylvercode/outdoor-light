@@ -33,19 +33,19 @@ export default async function updateWallLightEmission(wall: WallDocument): Promi
 
     const ray = wallCoordAsRay(wall.c);
     const center = getRayCenter(ray);
-    const rotationDegrees = getRotationDegrees(lightSide === LightEmissionSide.left, ray);
 
     const lightData: AmbientLightUpdateDataWithEmissionWallId = {
         x: center.x,
         y: center.y,
         config: {
-            angle: 180
+            angle: 360
         },
 
-        rotation: rotationDegrees,
+        rotation: 0,
         flags: {
             [MODULE_ID]: {
                 emissionWallId: wall.id,
+                isOutdoor: outdoorWallFlags.isBlockingOutdoorLight,
             },
         },
     };
@@ -63,28 +63,17 @@ export default async function updateWallLightEmission(wall: WallDocument): Promi
 }
 
 /**
- * Calculates the rotation in degrees for the light based on the wall's ray and which side the light is on.
- * @param isLeft Whether the light is on the left side of the wall.
- * @param ray The ray representing the wall.
- * @returns The rotation in degrees for the light.
- */
-function getRotationDegrees(isLeft: boolean, ray: Ray): number {
-    const rotationDegrees360 = ((ray.angle * 180) / Math.PI + 360) % 360;
-    if (isLeft)
-        return rotationDegrees360;
-
-    return (rotationDegrees360 > 180) ? rotationDegrees360 - 180 : rotationDegrees360 + 180;
-}
-
-/**
- * Calculates the center point of a ray.
+ * Calculates the center point of a ray, shifted one pixel to the left or right side.
  * @param ray The ray to calculate the center point for.
- * @returns The center point of the ray.
+ * @param isLeft Whether to shift to the left side of the ray (true) or right side (false).
+ * @param shiftPixels Number of pixels to shift perpendicular to the ray (defaults to 1).
+ * @returns The shifted center point of the ray.
  */
 function getRayCenter(ray: foundry.canvas.geometry.Ray): Canvas.Point {
-    const x = (ray.A.x + ray.B.x) / 2;
-    const y = (ray.A.y + ray.B.y) / 2;
-    return { x, y };
+    const midX = (ray.A.x + ray.B.x) / 2;
+    const midY = (ray.A.y + ray.B.y) / 2;
+
+    return { x: midX, y: midY };
 }
 
 /**
