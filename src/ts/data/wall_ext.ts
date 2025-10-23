@@ -16,20 +16,11 @@ export enum OutdoorWallFlagName {
  * Enum for light emission data keys.
  */
 export enum LightEmissionKey {
-    side = "side",
+    enabled = "enabled",
     dim = "dim",
     bright = "bright",
     units = "units",
     lightId = "lightId"
-}
-
-/**
- * Enum for light emission sides.
- */
-export enum LightEmissionSide {
-    none = "none",
-    left = "left",
-    right = "right"
 }
 
 /**
@@ -44,7 +35,7 @@ export enum LightEmissionUnits {
  * Interface for light emission data.
  */
 export type LightEmissionData = {
-    [LightEmissionKey.side]?: LightEmissionSide;
+    [LightEmissionKey.enabled]?: boolean;
     [LightEmissionKey.dim]?: number;
     [LightEmissionKey.bright]?: number;
     [LightEmissionKey.units]?: LightEmissionUnits;
@@ -71,19 +62,6 @@ declare module "fvtt-types/configuration" {
 }
 
 /**
- * Field options for light emission data schema.
- */
-const LightEmissionSideFieldOptions: EnumFieldOptions<LightEmissionSide, typeof LightEmissionSide> = {
-    choices: {
-        [LightEmissionSide.none]: `${UPPER_MODULE_ID}.LightEmissionSide.${LightEmissionSide.none}`,
-        [LightEmissionSide.left]: `${UPPER_MODULE_ID}.LightEmissionSide.${LightEmissionSide.left}`,
-        [LightEmissionSide.right]: `${UPPER_MODULE_ID}.LightEmissionSide.${LightEmissionSide.right}`
-    },
-    initial: LightEmissionSide.none,
-    required: true
-}
-
-/**
  * Field options for light emission dim and bright.
  */
 const LightEmissionDimBrightFieldOptions: NumberField.Options = {
@@ -107,7 +85,7 @@ const LightEmissionUnitsFieldOptions: EnumFieldOptions<LightEmissionUnits, typeo
  * Data schema for light emission settings.
  */
 export interface LightEmissionDataSchema extends DataSchema {
-    [LightEmissionKey.side]: EnumField<LightEmissionSide, typeof LightEmissionSide>;
+    [LightEmissionKey.enabled]: BooleanField;
     [LightEmissionKey.dim]: NumberField<typeof LightEmissionDimBrightFieldOptions>;
     [LightEmissionKey.bright]: NumberField<typeof LightEmissionDimBrightFieldOptions>;
     [LightEmissionKey.units]: EnumField<LightEmissionUnits, typeof LightEmissionUnits>;
@@ -155,7 +133,7 @@ export class OutdoorWallFlagsDataModel extends foundry.abstract.DataModel<Outdoo
         return {
             [OutdoorWallFlagName.isBlockingOutdoorLight]: new foundry.data.fields.BooleanField(),
             [OutdoorWallFlagName.lightEmission]: new foundry.data.fields.SchemaField<LightEmissionDataSchema>({
-                [LightEmissionKey.side]: new EnumField(LightEmissionSideFieldOptions),
+                [LightEmissionKey.enabled]: new foundry.data.fields.BooleanField(),
                 [LightEmissionKey.dim]: new foundry.data.fields.NumberField(LightEmissionDimBrightFieldOptions),
                 [LightEmissionKey.bright]: new foundry.data.fields.NumberField(LightEmissionDimBrightFieldOptions),
                 [LightEmissionKey.units]: new EnumField(LightEmissionUnitsFieldOptions),
@@ -178,22 +156,13 @@ async function updateWall(
     _options: WallDocument.Database.UpdateOptions,
     _userId: string,
 ): Promise<void> {
-    if (change.flags?.[MODULE_ID]?.isBlockingOutdoorLight !== undefined) {
-        game.canvas?.perception.update({
-            refreshEdges: true,         // Recompute edge intersections
-            initializeLighting: true,   // Recompute light sources
-            initializeVision: true,     // Recompute vision sources
-            initializeSounds: true      // Recompute sound sources
-        });
-    }
-
     const mustUpdateLightEmission = (() => {
         const lightEmissionFlag = change.flags?.[MODULE_ID]?.lightEmission;
         if (lightEmissionFlag)
             return true;
 
-        const side = document?.flags?.[MODULE_ID]?.lightEmission?.side ?? LightEmissionSide.none;
-        if (side === LightEmissionSide.none)
+        const enabled = document?.flags?.[MODULE_ID]?.lightEmission?.enabled;
+        if (!enabled)
             return false;
 
         return change.c !== undefined || change.door !== undefined || change.ds !== undefined;
@@ -201,6 +170,15 @@ async function updateWall(
     if (mustUpdateLightEmission) {
         const lightId = await updateWallLightEmission(document);
         await syncWallLightEmissionId(document, lightId);
+    }
+
+    if (change.flags?.[MODULE_ID]?.isBlockingOutdoorLight !== undefined) {
+        game.canvas?.perception.update({
+            refreshEdges: true,         // Recompute edge intersections
+            initializeLighting: true,   // Recompute light sources
+            initializeVision: true,     // Recompute vision sources
+            initializeSounds: true      // Recompute sound sources
+        });
     }
 }
 

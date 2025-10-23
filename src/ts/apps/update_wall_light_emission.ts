@@ -1,6 +1,6 @@
 import { MODULE_ID } from "../constants";
 import { OutdoorLightFlagName } from "../data/ambient_light_ext";
-import { LightEmissionSide, OutdoorWallFlagsDataModel } from "../data/wall_ext";
+import { OutdoorWallFlagsDataModel } from "../data/wall_ext";
 import { AmbientLightProxy } from "../proxies/ambient_light_proxy";
 import wallCoordAsRay from "../utils/wall_doc_as_ray";
 import applyDefaultOutdoorLightSettings from "./apply_default_outdoor_light_settings";
@@ -15,7 +15,7 @@ export default async function updateWallLightEmission(wall: WallDocument): Promi
         throw new Error("Wall must have an ID and a parent to update light emission.");
 
     const outdoorWallFlags = new OutdoorWallFlagsDataModel(wall);
-    const lightSide = outdoorWallFlags.lightEmission?.side ?? LightEmissionSide.none;
+    const lightEnabled = outdoorWallFlags.lightEmission?.enabled ?? false;
 
 
     const light = (() => {
@@ -25,7 +25,7 @@ export default async function updateWallLightEmission(wall: WallDocument): Promi
         return game.canvas?.scene?.getEmbeddedDocument("AmbientLight", lightId, {});
     })();
 
-    if (lightSide === LightEmissionSide.none) {
+    if (!lightEnabled) {
         if (light)
             await light.delete();
         return null;
@@ -63,11 +63,9 @@ export default async function updateWallLightEmission(wall: WallDocument): Promi
 }
 
 /**
- * Calculates the center point of a ray, shifted one pixel to the left or right side.
+ * Calculates the center point of a ray.
  * @param ray The ray to calculate the center point for.
- * @param isLeft Whether to shift to the left side of the ray (true) or right side (false).
- * @param shiftPixels Number of pixels to shift perpendicular to the ray (defaults to 1).
- * @returns The shifted center point of the ray.
+ * @returns The center point of the ray.
  */
 function getRayCenter(ray: foundry.canvas.geometry.Ray): Canvas.Point {
     const midX = (ray.A.x + ray.B.x) / 2;
