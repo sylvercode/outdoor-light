@@ -200,18 +200,22 @@ async function updateWall(
     })();
     if (mustUpdateLightEmission) {
         const lightId = await updateWallLightEmission(document);
-        const idInWall = document.flags[MODULE_ID]?.lightEmission!.lightId;
-        if (idInWall !== lightId) {
-            await document.update({
-                flags: {
-                    [MODULE_ID]: {
-                        lightEmission: {
-                            lightId: lightId
-                        }
+        await syncWallLightEmissionId(document, lightId);
+    }
+}
+
+async function syncWallLightEmissionId(document: WallDocument, lightId: string | null) {
+    const idInWall = document.flags[MODULE_ID]?.lightEmission!.lightId;
+    if (idInWall !== lightId) {
+        await document.update({
+            flags: {
+                [MODULE_ID]: {
+                    lightEmission: {
+                        lightId: lightId
                     }
                 }
-            });
-        }
+            }
+        });
     }
 }
 
@@ -226,6 +230,14 @@ async function deleteWall(document: WallDocument) {
         document.parent?.deleteEmbeddedDocuments("AmbientLight", [lightId]);
 }
 
+async function createWall(
+    document: WallDocument,
+    _options: WallDocument.Database.CreateOptions,
+    _userId: string) {
+    const lightId = await updateWallLightEmission(document);
+    await syncWallLightEmissionId(document, lightId);
+}
+
 /**
  * Iterable of hook definitions for this data model.
  */
@@ -234,6 +246,10 @@ export const HOOKS_DEFINITIONS: Iterable<HookDefinitions> = [{
         {
             name: "i18nInit",
             callback: OutdoorWallFlagsDataModel.i18nInit
+        },
+        {
+            name: "createWall",
+            callback: createWall
         },
         {
             name: "updateWall",
