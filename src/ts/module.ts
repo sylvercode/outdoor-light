@@ -20,7 +20,7 @@ Hooks.once("init", () => {
     return;
   }
 
-  for (const patch of ModuleHooks.LIBWRAPPER_PATCHS) {
+  for (const patch of ModuleHooks.LIBWRAPPER_PATCHES) {
     libWrapper.register(MODULE_ID, patch.target, patch.fn, patch.type, patch.options);
   }
 });

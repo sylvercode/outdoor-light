@@ -6,7 +6,7 @@ import { OutdoorLightFlagsDataModel } from "../data/ambient_light_ext";
 /**
  * LibWrapper patch definitions for ClockwiseSweepPolygon edge inclusion test logic.
  */
-export const LIBWRAPPER_PATCHS: Iterable<LibWrapperWrapperDefinitions> = [
+export const LIBWRAPPER_PATCHES: Iterable<LibWrapperWrapperDefinitions> = [
     {
         target: "foundry.canvas.geometry.ClockwiseSweepPolygon.prototype._testEdgeInclusion",
         fn: testEdgeInclusion_Wrapper,
