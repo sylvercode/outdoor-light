@@ -161,7 +161,7 @@ async function updateWall(
         if (lightEmissionFlag)
             return true;
 
-        const enabled = document?.flags?.[MODULE_ID]?.lightEmission?.enabled;
+        const enabled = document.flags?.[MODULE_ID]?.lightEmission?.enabled;
         if (!enabled)
             return false;
 
@@ -187,7 +187,7 @@ function updatePerception() {
 }
 
 async function syncWallLightEmissionId(document: WallDocument, lightId: string | null) {
-    const idInWall = document.flags[MODULE_ID]?.lightEmission!.lightId;
+    const idInWall = document.flags[MODULE_ID]?.lightEmission?.lightId;
     if (idInWall !== lightId) {
         await document.update({
             flags: {

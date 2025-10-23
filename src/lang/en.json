@@ -18,7 +18,7 @@
         },
         "lightEmission": {
           "enabled": {
-            "label": "Emmit light"
+            "label": "Emit light"
           },
           "dim": {
             "label": "Light Emission Dim"
