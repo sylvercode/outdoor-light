@@ -18,8 +18,7 @@
         },
         "lightEmission": {
           "side": {
-            "label": "Light Emission Side",
-            "hint": "Enable light emission on one side of the wall."
+            "label": "Light Emission Side"
           },
           "dim": {
             "label": "Light Emission Dim"

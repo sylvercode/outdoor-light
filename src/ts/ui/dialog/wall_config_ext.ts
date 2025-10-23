@@ -46,10 +46,8 @@ async function renderWallConfig(
     const rootFieldBuilder = new FieldBuilder(context.rootId, dataModel.schema.fields, dataModel);
 
     const isBlockingOutdoorLightFormGroup = rootFieldBuilder.get(OutdoorWallFlagName.isBlockingOutdoorLight);
+    moveInputInMainDiv(isBlockingOutdoorLightFormGroup);
     fieldset.append(isBlockingOutdoorLightFormGroup);
-
-    const lightEmissionFieldSet: HTMLFieldSetElement = await renderTemplateHtml("modules/outdoor-light/templates/light_emission_settings_fieldset.hbs", {});
-    fieldset.append(lightEmissionFieldSet);
 
     const lightEmissionFieldBuilder = new FieldBuilder(context.rootId, dataModel.schema.fields.lightEmission.fields, dataModel.lightEmission);
 
@@ -60,8 +58,11 @@ async function renderWallConfig(
         LightEmissionKey.side,
         { value: lightEmissionSide, localize: true }
     );
-    changeLabelText(lightEmissionSideFieldGroup, "OUTDOOR-LIGHT.side");
-    lightEmissionFieldSet.append(lightEmissionSideFieldGroup);
+    // changeLabelText(lightEmissionSideFieldGroup, "OUTDOOR-LIGHT.side");
+    fieldset.append(lightEmissionSideFieldGroup);
+
+    const lightEmissionFieldSet: HTMLFieldSetElement = await renderTemplateHtml("modules/outdoor-light/templates/light_emission_settings_fieldset.hbs", {});
+    fieldset.append(lightEmissionFieldSet);
 
     const lightEmissionRadiusFormGroup: HTMLDivElement = await renderTemplateHtml("modules/outdoor-light/templates/light_emission_settings_radius_form_group.hbs", {});
     lightEmissionFieldSet.append(lightEmissionRadiusFormGroup);
@@ -86,7 +87,7 @@ async function renderWallConfig(
     changeLabelText(lightEmissionUnitsFormGroup, "OUTDOOR-LIGHT.units");
     lightEmissionFieldSet.append(lightEmissionUnitsFormGroup);
 
-    addEventListenerToSideSelect(dataModel.schema.fields.lightEmission.fields, lightEmissionFieldSet);
+    addEventListenerToSideSelect(dataModel.schema.fields.lightEmission.fields, fieldset);
 }
 
 /**
@@ -124,6 +125,19 @@ function moveLabelAndInputTo(source: HTMLDivElement, target: HTMLDivElement) {
 
     target.append(label);
     target.append(input);
+}
+
+function moveInputInMainDiv(source: HTMLDivElement) {
+    const input = source.querySelector('input');
+    const subDiv = input?.parentElement;
+
+    if (!input || !subDiv || subDiv === source) {
+        console.error("Input or sub-div not found or invalid in source");
+        return;
+    }
+
+    source.append(input);
+    subDiv.remove();
 }
 
 /**
