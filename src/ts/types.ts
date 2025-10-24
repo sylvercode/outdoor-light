@@ -10,6 +10,7 @@ import * as ClockwiseSweepPolygonPatch from "./apps/clockwise_sweep_polygon_ext"
 import * as LightingLayerTools from "./ui/tools/lighting_layer_tools_ext";
 import * as ToggleOutdoorLayer from "./ui/tools/toggle_outdoor_layer";
 import * as WallsLayerTools from "./ui/tools/walls_layer_tools_ext";
+import * as DoorControl from "./ui/controls/door_control";
 import * as settings from "./settings";
 
 /**
@@ -34,7 +35,8 @@ export class OutdoorLightModuleHooks {
    * Iterable of callbacks to be called on module initialization.
    */
   static ON_INIT_MODULE_CALLBACKS: Iterable<OnInitModuleFunc> = [
-    settings.onInitHandle
+    settings.onInitHandle,
+    DoorControl.onInitHandle
   ];
 
   /**
@@ -44,6 +46,7 @@ export class OutdoorLightModuleHooks {
     ...ClockwiseSweepPolygonPatch.LIBWRAPPER_PATCHES,
     ...WallsLayerTools.LIBWRAPPER_PATCHES,
     ...ToggleOutdoorLayer.LIBWRAPPER_PATCHES,
+    ...DoorControl.LIBWRAPPER_PATCHES
   ];
 
   /**
