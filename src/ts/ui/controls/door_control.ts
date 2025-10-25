@@ -2,8 +2,8 @@ import { LibWrapperBaseCallback, LibWrapperBaseCallbackArgs, LibWrapperWrapperDe
 import { MODULE_ID } from "src/ts/constants";
 import { OutdoorWallFlagsDataModel } from "src/ts/data/wall_ext";
 
-const CURTAIN_CLOSE_ICON_PATH = `modules/${MODULE_ID}/icons/svg/curtain-closed.svg`;
-const CURTAIN_OPEN_ICON_PATH = `modules/${MODULE_ID}/icons/svg/curtain-opened.svg`;
+export const CURTAIN_CLOSE_ICON_PATH = `modules/${MODULE_ID}/icons/svg/curtain-closed.svg`;
+export const CURTAIN_OPEN_ICON_PATH = `modules/${MODULE_ID}/icons/svg/curtain-opened.svg`;
 
 export function onInitHandle() {
     foundry.canvas.TextureLoader.loader.loadTexture(CURTAIN_CLOSE_ICON_PATH);
