@@ -1,5 +1,6 @@
 import { LibWrapperBaseCallback, LibWrapperBaseCallbackArgs, LibWrapperWrapperDefinitions } from "fvtt-lib-wrapper-types";
 import { MODULE_ID } from "src/ts/constants";
+import { OutdoorWallFlagsDataModel } from "src/ts/data/wall_ext";
 
 const CURTAIN_CLOSE_ICON_PATH = `modules/${MODULE_ID}/icons/svg/curtain-closed.svg`;
 const CURTAIN_OPEN_ICON_PATH = `modules/${MODULE_ID}/icons/svg/curtain-opened.svg`;
@@ -26,16 +27,20 @@ function getTexture_Wrapper(this: DoorControl, wrapped: LibWrapperBaseCallback, 
 }
 
 function getWidowsTexture(dc: DoorControl): loadTexture.Return | null {
-    const doorDoc = dc.wall.document;
-    if (doorDoc.door === CONST.WALL_DOOR_TYPES.NONE)
+    const wallDoc = dc.wall.document;
+    const wallFlags = new OutdoorWallFlagsDataModel(wallDoc);
+    if (!wallFlags.isCurtain)
         return null;
 
-    if (doorDoc.light !== CONST.WALL_SENSE_TYPES.NONE &&
-        doorDoc.light !== CONST.WALL_SENSE_TYPES.PROXIMITY)
+    if (wallDoc.door === CONST.WALL_DOOR_TYPES.NONE)
+        return null;
+
+    if (wallDoc.light !== CONST.WALL_SENSE_TYPES.NONE &&
+        wallDoc.light !== CONST.WALL_SENSE_TYPES.PROXIMITY)
         return null;
 
     const texturePath = (() => {
-        if (doorDoc.ds === CONST.WALL_DOOR_STATES.OPEN)
+        if (wallDoc.ds === CONST.WALL_DOOR_STATES.OPEN)
             return CURTAIN_OPEN_ICON_PATH;
         return CURTAIN_CLOSE_ICON_PATH;
     })();

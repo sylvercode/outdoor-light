@@ -35,9 +35,10 @@ async function renderWallConfig(
         return;
     }
 
-    const fieldset = content.querySelector('fieldset:has(select[name="sight"])');
-    if (!fieldset) {
-        console.error('Could not find fieldset containing select[name="sight"]');
+    const restrictionFieldset = content.querySelector('fieldset:has(select[name="sight"])');
+    const doorFieldset = content.querySelector('fieldset:has(select[name="door"])');
+    if (!restrictionFieldset || !doorFieldset) {
+        console.error('Could not find fieldset containing select[name="sight"] or select[name="door"]');
         return;
     }
 
@@ -47,7 +48,7 @@ async function renderWallConfig(
 
     const isBlockingOutdoorLightFormGroup = rootFieldBuilder.get(OutdoorWallFlagName.isBlockingOutdoorLight);
     moveInputInMainDiv(isBlockingOutdoorLightFormGroup);
-    fieldset.append(isBlockingOutdoorLightFormGroup);
+    restrictionFieldset.append(isBlockingOutdoorLightFormGroup);
 
     const lightEmissionFieldBuilder = new FieldBuilder(context.rootId, dataModel.schema.fields.lightEmission.fields, dataModel.lightEmission);
 
@@ -58,10 +59,10 @@ async function renderWallConfig(
         { value: lightEmissionEnabled, localize: true }
     );
     moveInputInMainDiv(lightEmissionEnabledFieldGroup);
-    fieldset.append(lightEmissionEnabledFieldGroup);
+    restrictionFieldset.append(lightEmissionEnabledFieldGroup);
 
     const lightEmissionFieldSet: HTMLFieldSetElement = await renderTemplateHtml("modules/outdoor-light/templates/light_emission_settings_fieldset.hbs", {});
-    fieldset.append(lightEmissionFieldSet);
+    restrictionFieldset.append(lightEmissionFieldSet);
 
     const lightEmissionRadiusFormGroup: HTMLDivElement = await renderTemplateHtml("modules/outdoor-light/templates/light_emission_settings_radius_form_group.hbs", {});
     lightEmissionFieldSet.append(lightEmissionRadiusFormGroup);
@@ -88,7 +89,17 @@ async function renderWallConfig(
     changeLabelText(lightEmissionUnitsFormGroup, "OUTDOOR-LIGHT.units");
     lightEmissionFieldSet.append(lightEmissionUnitsFormGroup);
 
-    addEventListenerToEmissionLightCheckbox(dataModel.schema.fields.lightEmission.fields, fieldset);
+    addEventListenerToEmissionLightCheckbox(dataModel.schema.fields.lightEmission.fields, restrictionFieldset);
+
+    const doorFieldGroup = doorFieldset.querySelector('.form-group:has(select[name="door"])') as HTMLDivElement;
+    if (!doorFieldGroup) {
+        console.error('Could not find .form-group containing select[name="door"]');
+        return;
+    }
+
+    const isCurtainFormGroup = rootFieldBuilder.get(OutdoorWallFlagName.isCurtain, { value: dataModel.isCurtain });
+    moveInputInMainDiv(isCurtainFormGroup);
+    doorFieldGroup.after(isCurtainFormGroup);
 }
 
 /**
