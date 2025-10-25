@@ -91,7 +91,7 @@ function getSceneControlButtons(controls: Record<string, SceneControls.Control>)
     wallTools[TOGGLE_CURTAIN_TOOL_NAME] = {
         name: TOGGLE_CURTAIN_TOOL_NAME,
         title: game.i18n.localize(`${UPPER_MODULE_ID}.SceneControl.${WALLS_LAYER_NAME}.${TOGGLE_CURTAIN_TOOL_NAME}.title`),
-        icon: "fas fa-booth-curtain",
+        icon: "fas fa-booth-curtain", // Will be replaced with custom icon in renderSceneControls hook
         toggle: true,
         active: false,
         order: getNextOrder(),
@@ -113,17 +113,27 @@ function WallsLayer_onDragLeftDrop(event: Canvas.Event.Pointer<Wall>): void {
         return;
 
     const toggleOutdoorWallsTool = wallControls.tools[TOGGLE_OUTDOOR_WALLS_TOOL_NAME].active ?? false;
-    if (!toggleOutdoorWallsTool)
+    const toggleCurtainTool = wallControls.tools[TOGGLE_CURTAIN_TOOL_NAME].active ?? false;
+    if (!toggleOutdoorWallsTool && !toggleCurtainTool)
         return;
 
-    // Use foundry use the _source to create the document, so we need to set the flag there.
-    const outdoorFlags = wallDoc._source.flags[MODULE_ID] ??= {};
-    outdoorFlags.isBlockingOutdoorLight = true;
-    const enabledLight = wallDoc.door !== CONST.WALL_DOOR_TYPES.NONE
-        || wallDoc.light == CONST.WALL_SENSE_TYPES.NONE
-        || wallDoc.light == CONST.WALL_SENSE_TYPES.PROXIMITY;
-    if (enabledLight)
-        outdoorFlags.lightEmission = { enabled: true };
+    // Foundry uses the _source to create the document, so we need to set the flag there.
+    const srcDoc = wallDoc?._source;
+    const outdoorFlags = srcDoc.flags[MODULE_ID] ??= {};
+    if (toggleOutdoorWallsTool) {
+        outdoorFlags.isBlockingOutdoorLight = true;
+        const enabledLight = wallDoc.door !== CONST.WALL_DOOR_TYPES.NONE
+            || wallDoc.light == CONST.WALL_SENSE_TYPES.NONE
+            || wallDoc.light == CONST.WALL_SENSE_TYPES.PROXIMITY;
+        if (enabledLight)
+            outdoorFlags.lightEmission = { enabled: true };
+    }
+
+    if (toggleCurtainTool) {
+        srcDoc.door = CONST.WALL_DOOR_TYPES.DOOR;
+        srcDoc.ds = CONST.WALL_DOOR_STATES.OPEN;
+        outdoorFlags.isCurtain = true;
+    }
 }
 
 /**
