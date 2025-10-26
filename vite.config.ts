@@ -38,6 +38,7 @@ export default defineConfig(({ mode }) => ({
         { src: "src/lang", dest: "dist" },
         { src: "src/packs", dest: "dist" },
         { src: "src/templates", dest: "dist" },
+        { src: "src/icons", dest: "dist" },
       ],
       hook: "writeBundle",
     }),

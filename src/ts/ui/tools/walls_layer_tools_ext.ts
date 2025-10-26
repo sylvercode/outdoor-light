@@ -3,15 +3,23 @@ import { LibWrapperBaseCallback, LibWrapperBaseCallbackArgs, LibWrapperWrapperDe
 import type SceneControls from "fvtt-types/src/foundry/client/applications/ui/scene-controls.mjs";
 import { MODULE_ID, UPPER_MODULE_ID } from "../../constants";
 import getToolOrderInsertionSequence from "../../utils/get_tool_order_insertion_sequence";
+import ApplicationV2 from "fvtt-types/src/foundry/client/applications/api/application.mjs";
+import { CURTAIN_OPEN_ICON_PATH } from "../controls/door_control";
 
 /**
  * Iterable of hook definitions for tools addition.
  */
 export const HOOKS_DEFINITIONS: Iterable<HookDefinitions> = [{
-    on: [{
-        name: "getSceneControlButtons" as any, // getSceneControlButtons types are missing in fvtt-types
-        callback: getSceneControlButtons as any
-    }]
+    on: [
+        {
+            name: "getSceneControlButtons" as any, // getSceneControlButtons types are missing in fvtt-types
+            callback: getSceneControlButtons as any
+        },
+        {
+            name: "renderSceneControls",
+            callback: renderSceneControls
+        }
+    ]
 }];
 
 /**
@@ -53,6 +61,11 @@ const YELLOW_TOOL_NAMES = ["closeDoors", "clear"];
 const TOGGLE_OUTDOOR_WALLS_TOOL_NAME = "toggleOutdoorWalls";
 
 /**
+ * Name of the curtain toggle tool.
+ */
+const TOGGLE_CURTAIN_TOOL_NAME = "toggleCurtains";
+
+/**
  * Hook callback to add the outdoor walls toggle tool to the scene controls.
  * @param controls The scene controls object.
  */
@@ -74,6 +87,15 @@ function getSceneControlButtons(controls: Record<string, SceneControls.Control>)
         active: false,
         order: getNextOrder(),
     };
+
+    wallTools[TOGGLE_CURTAIN_TOOL_NAME] = {
+        name: TOGGLE_CURTAIN_TOOL_NAME,
+        title: game.i18n.localize(`${UPPER_MODULE_ID}.SceneControl.${WALLS_LAYER_NAME}.${TOGGLE_CURTAIN_TOOL_NAME}.title`),
+        icon: "fas fa-booth-curtain", // Will be replaced with custom icon in renderSceneControls hook
+        toggle: true,
+        active: false,
+        order: getNextOrder(),
+    };
 }
 
 /**
@@ -91,15 +113,53 @@ function WallsLayer_onDragLeftDrop(event: Canvas.Event.Pointer<Wall>): void {
         return;
 
     const toggleOutdoorWallsTool = wallControls.tools[TOGGLE_OUTDOOR_WALLS_TOOL_NAME].active ?? false;
-    if (!toggleOutdoorWallsTool)
+    const toggleCurtainTool = wallControls.tools[TOGGLE_CURTAIN_TOOL_NAME].active ?? false;
+    if (!toggleOutdoorWallsTool && !toggleCurtainTool)
         return;
 
-    // Use foundry use the _source to create the document, so we need to set the flag there.
-    const outdoorFlags = wallDoc._source.flags[MODULE_ID] ??= {};
-    outdoorFlags.isBlockingOutdoorLight = true;
-    const enabledLight = wallDoc.door !== CONST.WALL_DOOR_TYPES.NONE
-        || wallDoc.light == CONST.WALL_SENSE_TYPES.NONE
-        || wallDoc.light == CONST.WALL_SENSE_TYPES.PROXIMITY;
-    if (enabledLight)
-        outdoorFlags.lightEmission = { enabled: true };
+    // Foundry uses the _source to create the document, so we need to set the flag there.
+    const srcDoc = wallDoc?._source;
+    const outdoorFlags = srcDoc.flags[MODULE_ID] ??= {};
+    if (toggleOutdoorWallsTool) {
+        outdoorFlags.isBlockingOutdoorLight = true;
+        const enabledLight = wallDoc.door !== CONST.WALL_DOOR_TYPES.NONE
+            || wallDoc.light == CONST.WALL_SENSE_TYPES.NONE
+            || wallDoc.light == CONST.WALL_SENSE_TYPES.PROXIMITY;
+        if (enabledLight)
+            outdoorFlags.lightEmission = { enabled: true };
+    }
+
+    if (toggleCurtainTool) {
+        srcDoc.door = CONST.WALL_DOOR_TYPES.DOOR;
+        srcDoc.ds = CONST.WALL_DOOR_STATES.OPEN;
+        outdoorFlags.isCurtain = true;
+    }
+}
+
+/**
+ * Hook callback to customize the curtain tool button appearance.
+ * @param _application The scene controls application instance.
+ * @param element The HTML element of the application.
+ * @param _context The render context.
+ * @param _options The render options.
+ */
+function renderSceneControls(
+    _application: SceneControls,
+    element: HTMLElement,
+    _context: ApplicationV2.RenderContextOf<SceneControls>,
+    _options: ApplicationV2.RenderOptionsOf<SceneControls>) {
+    const toolsMenu = element.querySelector("#scene-controls-tools");
+
+    const curtainButton = toolsMenu?.querySelector(`button[data-tool='${TOGGLE_CURTAIN_TOOL_NAME}']`) as HTMLElement | null;
+    if (!curtainButton)
+        return;
+
+    curtainButton.classList.remove("fas", "fa-booth-curtain");
+    curtainButton.style.paddingLeft = "0.4rem";
+    curtainButton.style.paddingRight = "0.4rem";
+
+    const imageIcon = document.createElement("img");
+    imageIcon.src = CURTAIN_OPEN_ICON_PATH;
+    imageIcon.alt = "Curtain Open";
+    curtainButton.appendChild(imageIcon);
 }

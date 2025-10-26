@@ -9,7 +9,8 @@ import updateWallLightEmission from "../apps/update_wall_light_emission";
  */
 export enum OutdoorWallFlagName {
     isBlockingOutdoorLight = "isBlockingOutdoorLight",
-    lightEmission = "lightEmission"
+    lightEmission = "lightEmission",
+    isCurtain = "isCurtain"
 }
 
 /**
@@ -40,7 +41,7 @@ export type LightEmissionData = {
     [LightEmissionKey.bright]?: number;
     [LightEmissionKey.units]?: LightEmissionUnits;
     [LightEmissionKey.lightId]?: string | null;
-};
+}
 
 /**
  * Interface for wall flags indicating outdoor blocking wall.
@@ -48,6 +49,7 @@ export type LightEmissionData = {
 export interface OutdoorWallFlags {
     [OutdoorWallFlagName.isBlockingOutdoorLight]?: boolean;
     [OutdoorWallFlagName.lightEmission]?: LightEmissionData;
+    [OutdoorWallFlagName.isCurtain]?: boolean;
 }
 
 /**
@@ -98,6 +100,7 @@ export interface LightEmissionDataSchema extends DataSchema {
 interface OutdoorWallFlagsSchema extends DataSchema {
     [OutdoorWallFlagName.isBlockingOutdoorLight]: BooleanField
     [OutdoorWallFlagName.lightEmission]: SchemaField<LightEmissionDataSchema>;
+    [OutdoorWallFlagName.isCurtain]: BooleanField;
 }
 
 /**
@@ -138,7 +141,8 @@ export class OutdoorWallFlagsDataModel extends foundry.abstract.DataModel<Outdoo
                 [LightEmissionKey.bright]: new foundry.data.fields.NumberField(LightEmissionDimBrightFieldOptions),
                 [LightEmissionKey.units]: new EnumField(LightEmissionUnitsFieldOptions),
                 [LightEmissionKey.lightId]: new foundry.data.fields.StringField()
-            })
+            }),
+            [OutdoorWallFlagName.isCurtain]: new foundry.data.fields.BooleanField()
         };
     }
 }
@@ -174,6 +178,10 @@ async function updateWall(
 
     if (mustUpdateLightEmission || change.flags?.[MODULE_ID]?.isBlockingOutdoorLight !== undefined) {
         updatePerception();
+    }
+
+    if (change.flags?.[MODULE_ID]?.isCurtain !== undefined) {
+        document.object?.doorControl?.draw();
     }
 }
 

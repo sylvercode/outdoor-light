@@ -34,6 +34,9 @@
             "label": "Associated Light ID",
             "hint": "The ID of the outdoor light associated with this wall for emission purposes."
           }
+        },
+        "isCurtain": {
+          "label": "Is Curtain"
         }
       }
     },
@@ -66,6 +69,9 @@
       "walls": {
         "toggleOutdoorWalls": {
           "title": "Outdoor Walls"
+        },
+        "toggleCurtains": {
+          "title": "Curtains"
         }
       },
       "lighting": {

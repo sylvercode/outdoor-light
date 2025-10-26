@@ -50,15 +50,150 @@ function identifyEdges_Wrapper(this: ClockwiseSweepPolygon, wrapped: LibWrapperB
  * @param csp The ClockwiseSweepPolygon instance.
  */
 function identifyEdges(csp: ClockwiseSweepPolygon): void {
-    if (!isOutdoorLight(csp))
-        return;
-
     for (const edge of csp.edges) {
-        const wallFlags = getWallDocFlags(edge);
-        const forceNoRestriction = isLightForWallEmission(csp, wallFlags);
-        if (forceNoRestriction || isOutdoorBorder(wallFlags))
-            applyOutdoorWallSenseRestriction(edge, forceNoRestriction);
+        const wallMod = getWallMod(csp, edge);
+        if (wallMod.hasModifications())
+            wallMod.applySensesTo(edge);
     }
+}
+
+/**
+ * Sense modification types.
+ */
+enum SenseModification {
+    UNCHANGED,
+    REVERT_FROM_DOC,
+    SET_NONE,
+    SET_NORMAL
+}
+
+/**
+ * Sense and threshold pair.
+ */
+type SenseAndThreshold = {
+    sens: CONST.WALL_SENSE_TYPES,
+    threshold: number | null
+}
+
+/**
+ * Edge modification information.
+ */
+class EdgeModification {
+    /**
+     * Constructor.
+     * @param wallDoc The wall document of the edge to modify
+     */
+    constructor(private wallDoc: WallDocument | null = null) { }
+
+    /**
+     * Modifications for move restriction.
+     */
+    move: SenseModification = SenseModification.UNCHANGED;
+
+    /**
+     * Modifications for light restriction.
+     */
+    light: SenseModification = SenseModification.UNCHANGED;
+
+    /**
+     * Modifications for sight restriction.
+     */
+    sight: SenseModification = SenseModification.UNCHANGED;
+
+    /**
+     * Checks if any modifications are present.
+     * @returns True if modifications are present, false otherwise.
+     */
+    hasModifications(): boolean {
+        return this.light !== SenseModification.UNCHANGED
+            || this.sight !== SenseModification.UNCHANGED
+            || this.move !== SenseModification.UNCHANGED
+    }
+
+    /**
+     * Gets the modified sense and threshold for a given restriction type.
+     * @param type The restriction type ("light", "sight", or "move")
+     * @param current The current edge sense with threshold
+     * @returns The sense and threshold to apply
+     */
+    getSensFor(type: "light" | "sight" | "move", current: SenseAndThreshold)
+        : SenseAndThreshold {
+        const mod = this[type];
+        switch (mod) {
+            case SenseModification.SET_NONE:
+                return { sens: CONST.WALL_SENSE_TYPES.NONE, threshold: null };
+            case SenseModification.SET_NORMAL:
+                return { sens: CONST.WALL_SENSE_TYPES.NORMAL, threshold: null };
+            case SenseModification.REVERT_FROM_DOC:
+                if (!this.wallDoc)
+                    return current;
+                const docSens = this.wallDoc[type] as CONST.WALL_SENSE_TYPES;
+                const docThreshold = type !== "move" ? this.wallDoc.threshold?.[type] ?? null : null;
+                return { sens: docSens, threshold: docThreshold };
+            default:
+                return current;
+        }
+    }
+
+    /**
+     * Applies the sense modification to the given edge for the specified restriction type.
+     * @param type The restriction type ("light", "sight", or "move")
+     * @param edge The edge to modify
+     */
+    applySenseTo(type: "light" | "sight" | "move", edge: Edge): void {
+        const curThreshold = type !== "move" ? edge.threshold?.[type] ?? null : null;
+        const current = { sens: edge[type], threshold: curThreshold };
+        const newSens = this.getSensFor(type, current);
+        edge[type] = newSens.sens;
+        if (type !== "move" && edge.threshold?.[type] !== undefined)
+            edge.threshold[type] = newSens.threshold;
+    }
+
+    /**
+     * Applies all sense modifications to the given edge.
+     * @param edge The edge to modify
+     */
+    applySensesTo(edge: Edge): void {
+        this.applySenseTo("light", edge);
+        this.applySenseTo("sight", edge);
+        this.applySenseTo("move", edge);
+    }
+}
+
+/**
+ * Determines the edge modifications based on wall and light properties.
+ * @param csp The ClockwiseSweepPolygon instance
+ * @param edge The edge to evaluate
+ * @returns The EdgeModification instance with determined modifications
+ */
+function getWallMod(csp: ClockwiseSweepPolygon, edge: Edge): EdgeModification {
+
+    const wallInfo = getWallDocWithOutdoorFlags(edge);
+    if (!wallInfo)
+        return new EdgeModification();
+
+    const result = new EdgeModification(wallInfo.doc);
+
+    if (wallInfo.flags.isCurtain && wallInfo.doc.door !== CONST.WALL_DOOR_TYPES.NONE) {
+        if (wallInfo.doc.ds !== CONST.WALL_DOOR_STATES.OPEN) {
+            result.light = SenseModification.SET_NORMAL;
+            result.sight = SenseModification.SET_NORMAL;
+        }
+        else {
+            result.light = SenseModification.REVERT_FROM_DOC;
+            result.sight = SenseModification.REVERT_FROM_DOC;
+            result.move = SenseModification.REVERT_FROM_DOC;
+        }
+    }
+
+    const lightInfo = getLightDocWithOutdoorFlags(csp);
+
+    if (wallInfo.flags.lightEmission.lightId === lightInfo?.doc.id)
+        result.light = SenseModification.SET_NONE;
+    else if (wallInfo.flags.isBlockingOutdoorLight && lightInfo?.flags.isOutdoor)
+        result.light = SenseModification.SET_NORMAL;
+
+    return result;
 }
 
 /**
@@ -68,69 +203,38 @@ function identifyEdges(csp: ClockwiseSweepPolygon): void {
  * @returns The original or modified Edge
  */
 function getTestEdge(csp: ClockwiseSweepPolygon, edge: Edge): Edge {
-    const wallFlags = getWallDocFlags(edge);
-    const forceNoRestriction = isLightForWallEmission(csp, wallFlags);
-    if (!forceNoRestriction || !isOutdoorLight(csp) || !isOutdoorBorder(wallFlags))
+    const wallMod = getWallMod(csp, edge);
+    if (!wallMod.hasModifications())
         return edge;
 
     const clonedEdge = edge.clone();
-    applyOutdoorWallSenseRestriction(clonedEdge, forceNoRestriction);
+    wallMod.applySensesTo(clonedEdge);
     return clonedEdge;
 }
 
-function isLightForWallEmission(csp: ClockwiseSweepPolygon, wallFlags: OutdoorWallFlagsDataModel | null): boolean {
-    if (!wallFlags)
-        return false;
-
-    const cspObj = csp.config.source?.object;
-    if (!(cspObj instanceof foundry.canvas.placeables.AmbientLight))
-        return false;
-
-    const lightId = cspObj.id;
-    if (!lightId)
-        return false;
-
-    return wallFlags.lightEmission.lightId === lightId;
-}
-
-function getWallDocFlags(edge: Edge): OutdoorWallFlagsDataModel | null {
-    const wallDoc = edge.object?.document;
-    if (!(wallDoc instanceof WallDocument))
+/**
+ * Retrieves the ambient light document and its outdoor flags from the ClockwiseSweepPolygon.
+ * @param csp The ClockwiseSweepPolygon instance
+ * @returns An object containing the ambient light document and its outdoor flags, or null if not applicable
+ */
+function getLightDocWithOutdoorFlags(csp: ClockwiseSweepPolygon): { doc: AmbientLightDocument, flags: OutdoorLightFlagsDataModel } | null {
+    const ambientLight = csp.config.source?.object;
+    if (!(ambientLight instanceof foundry.canvas.placeables.AmbientLight))
         return null;
 
-    return new OutdoorWallFlagsDataModel(wallDoc);
+    const dataModel = new OutdoorLightFlagsDataModel(ambientLight.document);
+    return { doc: ambientLight.document, flags: dataModel };
 }
 
 /**
- * Applies sense restriction to an edge to block outdoor light.
- * @param edge The edge to modify
+ * Retrieves the wall document and its outdoor flags from the given edge.
+ * @param edge The edge to evaluate
+ * @returns An object containing the wall document and its outdoor flags, or null if not applicable
  */
-function applyOutdoorWallSenseRestriction(edge: Edge, forceNoRestriction: boolean): void {
-    edge.light = forceNoRestriction ? CONST.WALL_SENSE_TYPES.NONE : CONST.WALL_SENSE_TYPES.NORMAL;
-    edge.threshold = undefined;
-}
+function getWallDocWithOutdoorFlags(edge: Edge): { doc: WallDocument, flags: OutdoorWallFlagsDataModel } | null {
+    const doc = edge.object?.document;
+    if (!(doc instanceof WallDocument))
+        return null;
 
-/**
- * Determines if the ClockwiseSweepPolygon's source is an outdoor light.
- * @param csp The ClockwiseSweepPolygon instance
- * @returns True if the source is an outdoor light, false otherwise
- */
-function isOutdoorLight(csp: ClockwiseSweepPolygon): boolean {
-    if (!(csp.config.source?.object instanceof foundry.canvas.placeables.AmbientLight))
-        return false;
-
-    const dataModel = new OutdoorLightFlagsDataModel(csp.config.source.object.document);
-    return dataModel.isOutdoor;
-}
-
-/**
- * Determines if the edge is a wall that blocks outdoor light.
- * @param edge The edge to test
- * @returns True if the edge blocks outdoor light, false otherwise
- */
-function isOutdoorBorder(outdoorWallFlags: OutdoorWallFlagsDataModel | null): boolean {
-    if (!outdoorWallFlags)
-        return false;
-
-    return outdoorWallFlags.isBlockingOutdoorLight;
+    return { doc: doc, flags: new OutdoorWallFlagsDataModel(doc) };
 }
