@@ -174,7 +174,7 @@ function getWallMod(csp: ClockwiseSweepPolygon, edge: Edge): EdgeModification {
 
     const result = new EdgeModification(wallInfo.doc);
 
-    if (wallInfo?.flags?.isCurtain && wallInfo.doc.door !== CONST.WALL_DOOR_TYPES.NONE) {
+    if (wallInfo.flags.isCurtain && wallInfo.doc.door !== CONST.WALL_DOOR_TYPES.NONE) {
         if (wallInfo.doc.ds !== CONST.WALL_DOOR_STATES.OPEN) {
             result.light = SenseModification.SET_NORMAL;
             result.sight = SenseModification.SET_NORMAL;
@@ -188,9 +188,9 @@ function getWallMod(csp: ClockwiseSweepPolygon, edge: Edge): EdgeModification {
 
     const lightInfo = getLightDocWithOutdoorFlags(csp);
 
-    if (wallInfo?.flags.lightEmission.lightId === lightInfo?.doc.id)
+    if (wallInfo.flags.lightEmission.lightId === lightInfo?.doc.id)
         result.light = SenseModification.SET_NONE;
-    else if (wallInfo?.flags.isBlockingOutdoorLight && lightInfo?.flags.isOutdoor)
+    else if (wallInfo.flags.isBlockingOutdoorLight && lightInfo?.flags.isOutdoor)
         result.light = SenseModification.SET_NORMAL;
 
     return result;

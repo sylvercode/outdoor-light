@@ -19,14 +19,14 @@ export const LIBWRAPPER_PATCHES: Iterable<LibWrapperWrapperDefinitions> = [
 ];
 
 function getTexture_Wrapper(this: DoorControl, wrapped: LibWrapperBaseCallback, ...args: LibWrapperBaseCallbackArgs): any {
-    const texture = getWidowsTexture(this);
+    const texture = getCurtainTexture(this);
     if (texture !== null)
         return texture;
     const result = wrapped.apply(this, args);
     return result;
 }
 
-function getWidowsTexture(dc: DoorControl): loadTexture.Return | null {
+function getCurtainTexture(dc: DoorControl): loadTexture.Return | null {
     const wallDoc = dc.wall.document;
     const wallFlags = new OutdoorWallFlagsDataModel(wallDoc);
     if (!wallFlags.isCurtain)

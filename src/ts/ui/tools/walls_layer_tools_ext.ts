@@ -3,7 +3,7 @@ import { LibWrapperBaseCallback, LibWrapperBaseCallbackArgs, LibWrapperWrapperDe
 import type SceneControls from "fvtt-types/src/foundry/client/applications/ui/scene-controls.mjs";
 import { MODULE_ID, UPPER_MODULE_ID } from "../../constants";
 import getToolOrderInsertionSequence from "../../utils/get_tool_order_insertion_sequence";
-import ApplicationV2 from "node_modules/fvtt-types/src/foundry/client/applications/api/application.mjs";
+import ApplicationV2 from "fvtt-types/src/foundry/client/applications/api/application.mjs";
 import { CURTAIN_OPEN_ICON_PATH } from "../controls/door_control";
 
 /**
@@ -157,7 +157,6 @@ function renderSceneControls(
     curtainButton.classList.remove("fas", "fa-booth-curtain");
     curtainButton.style.paddingLeft = "0.4rem";
     curtainButton.style.paddingRight = "0.4rem";
-
 
     const imageIcon = document.createElement("img");
     imageIcon.src = CURTAIN_OPEN_ICON_PATH;
