@@ -31,7 +31,7 @@ This module simplifies managing the above cases by adding quality-of-life featur
 
 New configurations allow lights to be flagged as *outdoor* and walls to be flagged as *outdoor border*. No matter the light restrictions on an *outdoor border* wall, an *outdoor* light will not pass through it. This helps with case **C**.
 
-Activate the tool to apply the outdoor flag to lights and walls created with other tools.
+Activate the tool <img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/refs/heads/6.x/svgs/solid/cloud-sun.svg" width="25rem" height="25rem" /> to apply the outdoor flag to lights and walls created with other tools.
 
 Note that only one radius is used based on the *outdoor light status* in scene settings (see below).
 
@@ -86,6 +86,8 @@ A wall-emission light in dim status will no longer produce a bright radius; its 
 
 When the scene mode is manual global light, the brightness and status settings have no visual or mechanical effect in Foundry. Radius are changed in case other modules rely on them.
 
+Use this tool <img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/refs/heads/6.x/svgs/solid/traffic-light.svg" width="25rem" height="25rem" /> to quickly change the status of the scene.
+
 ## Extra / Side Quest
 
 This next feature is related to lights but is an extra.
@@ -94,7 +96,7 @@ This next feature is related to lights but is an extra.
 
 A door can be marked as a curtain. This changes the control icon to a curtain and adjusts the door restrictions so it behaves like a curtain: when open, movement, light and sight are not fully passthrough; when closed, movement, light and sight still block.
 
-Use this tool to add a curtain flag to new walls.
+Use this tool <img src="src/icons/svg/curtain-closed.svg" width="25rem" height="25rem" /> to add a curtain flag to new walls.
 
 ## Dev container
 
