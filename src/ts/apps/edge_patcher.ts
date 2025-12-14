@@ -55,7 +55,8 @@ export namespace EdgePatcher {
             result.light = SenseModification.SET_NONE;
         else if (lightInfo.getFlag(MODULE_ID, OutdoorLightFlagName.isOutdoor)) {
             const WallBlockOutdoorLight = wallDoc.getFlag(MODULE_ID, OutdoorWallFlagName.isBlockingOutdoorLight)
-            result.light = WallBlockOutdoorLight ? SenseModification.SET_NORMAL : SenseModification.SET_NONE;
+            const IsAWallLight = lightInfo.getFlag(MODULE_ID, OutdoorLightFlagName.emissionWallId) !== null;
+            result.light = WallBlockOutdoorLight || IsAWallLight ? SenseModification.SET_NORMAL : SenseModification.SET_NONE;
         }
 
         return result;

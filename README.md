@@ -29,7 +29,7 @@ This module simplifies managing the above cases by adding quality-of-life featur
 
 ### Outdoor lights and walls
 
-New configurations allow lights to be flagged as *outdoor* and walls to be flagged as *outdoor border*. No matter the light restrictions on an *outdoor border* wall, an *outdoor* light will not pass through it. This helps with case **C**.
+New configurations allow lights to be flagged as *outdoor* and walls to be flagged as *outdoor border*. No matter the light restrictions on an *outdoor border* wall, an *outdoor* light will not pass through it but will pass through normal wall. This helps with case **C**.
 
 Activate the tool <img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/refs/heads/6.x/svgs/solid/cloud-sun.svg" width="25rem" height="25rem" /> to apply the outdoor flag to lights and walls created with other tools.
 
@@ -39,7 +39,9 @@ Also, the outdoor tool acts as a layer. Controls for lights related to outdoor w
 
 ### Walls with light emission
 
-A wall configuration option specifies that the wall emits light. A light is created and kept updated at the wall's center. If the wall is a door, the light is present only when the door is open. When the outdoor tool is active, new walls that have no light restriction or are doors will emit light. This helps with case **C**.
+A wall configuration option specifies that the wall emits light. A light is created and kept updated at the wall's center. If the wall is a door, the light is active only when the door is open. When the outdoor tool is active, new walls that have no light restriction or are doors will emit light. This helps with case **C**.
+
+Even if those lights are outdoor lights, they are blocked by normal wall (not flagged as outdoor).
 
 #### Emission radius
 
