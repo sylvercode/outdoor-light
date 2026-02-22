@@ -2,7 +2,7 @@ import { HookDefinitions } from "fvtt-hook-attacher";
 import { LibWrapperBaseCallback, LibWrapperBaseCallbackArgs, LibWrapperWrapperDefinitions } from "fvtt-lib-wrapper-types";
 import type SceneControls from "fvtt-types/src/foundry/client/applications/ui/scene-controls.mjs";
 import { MODULE_ID, UPPER_MODULE_ID } from "../../constants";
-import getToolOrderInsertionSequence from "../../utils/get_tool_order_insertion_sequence";
+import getToolOrderInsertionSequence from "fvtt-hook-attacher/utils/get_tool_order_insertion_sequence";
 import ApplicationV2 from "fvtt-types/src/foundry/client/applications/api/application.mjs";
 import { CURTAIN_OPEN_ICON_PATH } from "../controls/door_control";
 

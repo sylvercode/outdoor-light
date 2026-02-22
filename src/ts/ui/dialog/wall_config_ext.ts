@@ -2,9 +2,9 @@ import { HookDefinitions } from "fvtt-hook-attacher";
 import type ApplicationV2 from "fvtt-types/src/foundry/client/applications/api/application.mjs";
 import WallConfig from "fvtt-types/src/foundry/client/applications/sheets/wall-config.mjs";
 import { LightEmissionDataSchema, LightEmissionKey, LightEmissionUnits, OutdoorWallFlagName, OutdoorWallFlagsDataModel } from "../../data/wall_ext";
-import { renderTemplateHtml } from "src/ts/utils/render_template_html";
+import { renderTemplateHtml } from "fvtt-hook-attacher/utils/render_template_html";
 import { outdoorLightSettings } from "src/ts/settings";
-import FieldBuilder from "src/ts/utils/field_builder";
+import FieldBuilder from "fvtt-hook-attacher/utils/field_builder";
 
 /**
  * Iterable of hook definitions for patching the WallConfig rendering.
