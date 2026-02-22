@@ -1,7 +1,7 @@
 import { MODULE_ID, UPPER_MODULE_ID } from "../constants";
 import type { HookDefinitions } from "fvtt-hook-attacher";
 import type { BooleanField, DataSchema, NumberField, SchemaField, StringField } from "fvtt-types/src/foundry/common/data/fields.mjs";
-import { EnumField, EnumFieldOptions } from "../utils/enum_field";
+import { EnumField, EnumFieldOptions } from "fvtt-hook-attacher/utils/enum_field";
 import updateWallLightEmission from "../apps/update_wall_light_emission";
 
 /**

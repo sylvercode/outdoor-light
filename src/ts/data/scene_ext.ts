@@ -4,7 +4,7 @@ import { DataSchema } from "fvtt-types/src/foundry/common/data/fields.mjs";
 import { OutdoorLightFlagsDataModel } from "./ambient_light_ext";
 import applyDefaultOutdoorLightSettings, { Options as ApplyOptions } from "../apps/apply_default_outdoor_light_settings";
 import { AmbientLightDocumentProxy, AmbientLightDocWithParent } from "../proxies/ambient_light_proxy";
-import { EnumField, EnumFieldOptions } from "../utils/enum_field";
+import { EnumField, EnumFieldOptions } from "fvtt-hook-attacher/utils/enum_field";
 
 /**
  * Enum representing the available outdoor light modes.
