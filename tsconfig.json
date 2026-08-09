@@ -1,19 +1,18 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
       "fvtt-lib-wrapper-types": [
-        "libs/fvtt-lib-wrapper-types/index"
+        "./libs/fvtt-lib-wrapper-types/index"
       ],
       "fvtt-hook-attacher": [
-        "libs/fvtt-hook-attacher/index"
+        "./libs/fvtt-hook-attacher/index"
       ],
       "fvtt-hook-attacher/*": [
-        "libs/fvtt-hook-attacher/*"
+        "./libs/fvtt-hook-attacher/*"
       ],
     },
     "types": [
-      "fvtt-types",
+      "@league-of-foundry-developers/foundry-vtt-types",
     ],
     "typeRoots": [
       "node_modules",

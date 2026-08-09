@@ -2,17 +2,29 @@
   "name": "outdoor-light",
   "version": "1.0.0",
   "description": "Add outdoor lights and walls to Foundry VTT.",
+  "type": "module",
   "private": true,
   "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "build": "vite build --mode development",
     "watch": "vite build --watch"
   },
   "devDependencies": {
-    "fvtt-types": "github:League-of-Foundry-Developers/foundry-vtt-types#main",
+    "@babel/core": "^8.0.1",
+    "@babel/eslint-parser": "^8.0.1",
+    "@babel/preset-typescript": "^8.0.1",
+    "@league-of-foundry-developers/foundry-vtt-types": "github:League-of-Foundry-Developers/foundry-vtt-types#main",
+    "@eslint/js": "^9.33.0",
+    "eslint": "^9.33.0",
     "rollup-plugin-copy": "^3.5.0",
-    "sass": "^1.89.2",
-    "typescript": "^5.8.3",
-    "vite": "^7.0.4",
-    "vite-tsconfig-paths": "^5.1.4"
+    "sass": "^1.102.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.0",
+    "vite-tsconfig-paths": "^6.1.1"
+  },
+  "allowScripts": {
+    "github:League-of-Foundry-Developers/foundry-vtt-types#acdcbe498d2fa219580b76186103439fb3e241e1": true,
+    "@parcel/watcher@2.5.1": true
   }
 }

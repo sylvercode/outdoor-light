@@ -2,7 +2,6 @@ import path from "node:path";
 import * as fsPromises from "fs/promises";
 import copy from "rollup-plugin-copy";
 import { defineConfig, Plugin } from "vite";
-import tsconfigPaths from 'vite-tsconfig-paths';
 
 const moduleVersion = process.env.MODULE_VERSION;
 const githubProject = process.env.GH_PROJECT;
@@ -12,6 +11,7 @@ console.log(process.env.VSCODE_INJECTION);
 
 export default defineConfig(({ mode }) => ({
   resolve: {
+    tsconfigPaths: true,
     alias: {
       "fvtt-hook-attacher": path.resolve(process.cwd(), "libs/fvtt-hook-attacher"),
     },
@@ -29,9 +29,6 @@ export default defineConfig(({ mode }) => ({
     },
   },
   plugins: [
-    tsconfigPaths({
-      projects: [mode === "development" ? "tsconfig.dev.json" : "tsconfig.json"]
-    }),
     updateModuleManifestPlugin(),
     copy({
       targets: [
