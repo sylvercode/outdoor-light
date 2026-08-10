@@ -156,8 +156,8 @@ export class OutdoorWallFlagsDataModel extends foundry.abstract.DataModel<Outdoo
  */
 async function updateWall(
     document: WallDocument,
-    change: WallDocument.UpdateData,
-    _options: WallDocument.Database.UpdateOptions,
+    change: WallDocument & WallDocument.UpdateData, // Suspect error in WallDocument.UpdateData and must add WallDocument
+    _options: WallDocument.Database.OnUpdateOptions,
     _userId: string,
 ): Promise<void> {
     const mustUpdateLightEmission = (() => {
@@ -222,7 +222,7 @@ async function deleteWall(document: WallDocument) {
 
 async function createWall(
     document: WallDocument,
-    _options: WallDocument.Database.CreateOptions,
+    _options: WallDocument.Database.OnCreateOptions,
     _userId: string) {
     const lightId = await updateWallLightEmission(document);
     await syncWallLightEmissionId(document, lightId);
@@ -246,7 +246,7 @@ export const HOOKS_DEFINITIONS: Iterable<HookDefinitions> = [{
         },
         {
             name: "updateWall",
-            callback: updateWall
+            callback: updateWall as any // see definition of updateWall for the reason of using any
         },
         {
             name: "deleteWall",

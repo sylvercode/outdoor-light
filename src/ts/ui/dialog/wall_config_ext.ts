@@ -3,7 +3,7 @@ import type ApplicationV2 from "fvtt-types/src/foundry/client/applications/api/a
 import WallConfig from "fvtt-types/src/foundry/client/applications/sheets/wall-config.mjs";
 import { LightEmissionDataSchema, LightEmissionKey, LightEmissionUnits, OutdoorWallFlagName, OutdoorWallFlagsDataModel } from "../../data/wall_ext";
 import { renderTemplateHtml } from "fvtt-hook-attacher/utils/render_template_html";
-import { outdoorLightSettings } from "src/ts/settings";
+import { outdoorLightSettings } from "../../settings";
 import FieldBuilder from "fvtt-hook-attacher/utils/field_builder";
 
 /**

@@ -77,7 +77,9 @@ function getRayCenter(ray: foundry.canvas.geometry.Ray): Canvas.Point {
 /**
  * Type alias for AmbientLightDocument update data with emission wall ID flag defined.
  */
-type AmbientLightUpdateDataWithEmissionWallId = AmbientLightDocument.UpdateData & { flags: { [MODULE_ID]: { [OutdoorLightFlagName.emissionWallId]: string } } };
+type AmbientLightUpdateDataWithEmissionWallId =
+    AmbientLightDocument.CreateData &
+    { flags: { [MODULE_ID]: { [OutdoorLightFlagName.emissionWallId]: string } } };
 
 class AmbientLightUpdateData implements AmbientLightProxy {
     constructor(private data: AmbientLightUpdateDataWithEmissionWallId,

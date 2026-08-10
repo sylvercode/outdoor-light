@@ -2,7 +2,7 @@
   "compilerOptions": {
     "paths": {
       "fvtt-lib-wrapper-types": [
-        "./libs/fvtt-lib-wrapper-types/index"
+        "./libs/fvtt-lib-wrapper-types/index.d.ts"
       ],
       "fvtt-hook-attacher": [
         "./libs/fvtt-hook-attacher/index"
@@ -10,9 +10,21 @@
       "fvtt-hook-attacher/*": [
         "./libs/fvtt-hook-attacher/*"
       ],
+      "fvtt-types/configuration": [
+        "./node_modules/@league-of-foundry-developers/foundry-vtt-types/src/configuration/index.d.mts"
+      ],
+      "fvtt-types/utils": [
+        "./node_modules/@league-of-foundry-developers/foundry-vtt-types/src/utils/index.d.mts"
+      ],
+      "fvtt-types/src/*": [
+        "./node_modules/@league-of-foundry-developers/foundry-vtt-types/src/*"
+      ],
+      "fvtt-types/*": [
+        "./node_modules/@league-of-foundry-developers/foundry-vtt-types/src/*"
+      ]
     },
     "types": [
-      "@league-of-foundry-developers/foundry-vtt-types",
+      "@league-of-foundry-developers/foundry-vtt-types"
     ],
     "typeRoots": [
       "node_modules",
@@ -20,20 +32,18 @@
     ],
     "target": "ESNext",
     "useDefineForClassFields": true,
-    "module": "nodenext",
+    "module": "esnext",
     "lib": [
       "ESNext",
       "DOM"
     ],
-    "moduleResolution": "nodenext",
+    "moduleResolution": "bundler",
     "strict": true,
     "sourceMap": true,
     "resolveJsonModule": true,
     "isolatedModules": false,
     "esModuleInterop": true,
     "noEmit": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noImplicitOverride": true,
     "noImplicitAny": true,

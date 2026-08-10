@@ -135,8 +135,8 @@ export class OutdoorSceneFlagsDataModel extends foundry.abstract.DataModel<Outdo
 
 function updateScene(
     scene: Scene,
-    change: Scene.UpdateData,
-    _options: Scene.Database.UpdateOptions,
+    change: Scene & Scene.UpdateData, // Suspect error in Scene.UpdateData and must add Scene
+    _options: Scene.Database.OnUpdateOptions,
     _userId: string,
 ): void {
     const sceneOutdoorFlag = new OutdoorSceneFlagsDataModel(scene);
@@ -167,7 +167,7 @@ function updateScene(
  * Proxy for AmbientLightDocument that collects update data instead of applying changes directly.
  */
 class AmbientLightDocumentUpdateDataProxy extends AmbientLightDocumentProxy {
-    private updateData: AmbientLightDocument.UpdateData = {};
+    private updateData: AmbientLightDocument.CreateData = {};
 
     constructor(
         lightDoc: AmbientLightDocument & { parent: Scene }
@@ -234,7 +234,7 @@ export const HOOKS_DEFINITIONS: Iterable<HookDefinitions> = [{
         },
         {
             name: "updateScene",
-            callback: updateScene
+            callback: updateScene as any// see definition of updateScene for the reason of using any
         }
     ]
 }];

@@ -14,17 +14,19 @@
     "@babel/core": "^8.0.1",
     "@babel/eslint-parser": "^8.0.1",
     "@babel/preset-typescript": "^8.0.1",
-    "@league-of-foundry-developers/foundry-vtt-types": "github:League-of-Foundry-Developers/foundry-vtt-types#main",
     "@eslint/js": "^9.33.0",
+    "@league-of-foundry-developers/foundry-vtt-types": "github:League-of-Foundry-Developers/foundry-vtt-types#18cf35ee2b3079e40fa55490acfbaeb449003d89",
+    "@typescript-eslint/eslint-plugin": "^8.66.0",
+    "@typescript-eslint/parser": "^8.66.0",
     "eslint": "^9.33.0",
     "rollup-plugin-copy": "^3.5.0",
     "sass": "^1.102.0",
-    "typescript": "^7.0.2",
+    "typescript": "^5.8.3",
     "vite": "^8.2.0",
     "vite-tsconfig-paths": "^6.1.1"
   },
   "allowScripts": {
-    "github:League-of-Foundry-Developers/foundry-vtt-types#acdcbe498d2fa219580b76186103439fb3e241e1": true,
+    "github:League-of-Foundry-Developers/foundry-vtt-types#18cf35ee2b3079e40fa55490acfbaeb449003d89": true,
     "@parcel/watcher@2.5.1": true
   }
 }

@@ -1,4 +1,4 @@
-import Edge from "node_modules/fvtt-types/src/foundry/client/canvas/geometry/edges/edge.mjs";
+import Edge from "fvtt-types/src/foundry/client/canvas/geometry/edges/edge.mjs";
 import { OutdoorLightFlagName } from "../data/ambient_light_ext";
 import { OutdoorWallFlagName } from "../data/wall_ext";
 import { MODULE_ID } from "../constants";
@@ -89,8 +89,8 @@ export namespace EdgePatcher {
      * Sense and threshold pair.
      */
     type SenseAndThreshold = {
-        sens: CONST.WALL_SENSE_TYPES,
-        threshold: number | null
+        sens: CONST.EDGE_SENSE_TYPES,
+        threshold: number | undefined
     }
 
     /**
@@ -139,26 +139,27 @@ export namespace EdgePatcher {
             const mod = this[type];
             switch (mod) {
                 case SenseModification.SET_NONE:
-                    return { sens: CONST.WALL_SENSE_TYPES.NONE, threshold: null };
+                    return { sens: CONST.EDGE_SENSE_TYPES.NONE, threshold: undefined };
                 case SenseModification.SET_NORMAL:
-                    return { sens: CONST.WALL_SENSE_TYPES.NORMAL, threshold: null };
-                case SenseModification.REVERT_FROM_DOC:
+                    return { sens: CONST.EDGE_SENSE_TYPES.NORMAL, threshold: undefined };
+                case SenseModification.REVERT_FROM_DOC: {
                     if (!this.wallDoc)
                         return current;
-                    const docSens = this.wallDoc[type] as CONST.WALL_SENSE_TYPES;
+                    const docSens = this.wallDoc[type] as CONST.EDGE_SENSE_TYPES;
                     const threshold = (() => {
                         if (type === "move")
-                            return null;
-                        const docThreshold = this.wallDoc.threshold?.[type] ?? null;
-                        if (!docThreshold)
-                            return null;
+                            return undefined;
+                        const docThreshold = this.wallDoc.threshold?.[type];
+                        if (docThreshold == null)
+                            return undefined;
                         const scene = this.wallDoc.parent;
                         if (!scene)
-                            return null;
+                            return undefined;
                         const distancePixels = scene.dimensions.distancePixels;
                         return docThreshold * distancePixels;
                     })();
                     return { sens: docSens, threshold };
+                }
                 default:
                     return current;
             }
@@ -170,7 +171,7 @@ export namespace EdgePatcher {
          * @param edge The edge to modify
          */
         applySenseTo(type: "light" | "sight" | "move", edge: Edge): void {
-            const curThreshold = type !== "move" ? edge.threshold?.[type] ?? null : null;
+            const curThreshold = type !== "move" ? edge.threshold?.[type] : undefined;
             const current = { sens: edge[type], threshold: curThreshold };
             const newSens = this.getSensFor(type, current);
             edge[type] = newSens.sens;

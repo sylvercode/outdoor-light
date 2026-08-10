@@ -1,6 +1,6 @@
 import { LibWrapperBaseCallback, LibWrapperBaseCallbackArgs, LibWrapperWrapperDefinitions } from "fvtt-lib-wrapper-types";
-import Edge from "node_modules/fvtt-types/src/foundry/client/canvas/geometry/edges/edge.mjs";
-import CanvasEdges from "node_modules/fvtt-types/src/foundry/client/canvas/geometry/edges/edges.mjs";
+import Edge from "fvtt-types/src/foundry/client/canvas/geometry/edges/edge.mjs";
+import CanvasEdges from "fvtt-types/src/foundry/client/canvas/geometry/edges/edges.mjs";
 import { EdgePatcher } from "./edge_patcher";
 
 /**

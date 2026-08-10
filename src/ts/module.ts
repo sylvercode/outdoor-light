@@ -1,6 +1,5 @@
 // Do not remove this import. If you do Vite will think your styles are dead
 // code and not include them in the build output.
-import "../styles/module.scss";
 import { MODULE_ID } from "./constants";
 import { OutdoorLightModule as Module, OutdoorLightModuleHooks as ModuleHooks } from "./types";
 import { HooksAttacher } from "fvtt-hook-attacher";

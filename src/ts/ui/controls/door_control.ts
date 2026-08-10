@@ -1,6 +1,6 @@
 import { LibWrapperBaseCallback, LibWrapperBaseCallbackArgs, LibWrapperWrapperDefinitions } from "fvtt-lib-wrapper-types";
-import { MODULE_ID } from "src/ts/constants";
-import { OutdoorWallFlagsDataModel } from "src/ts/data/wall_ext";
+import { MODULE_ID } from "../../constants";
+import { OutdoorWallFlagsDataModel } from "../../data/wall_ext";
 
 export const CURTAIN_CLOSE_ICON_PATH = `modules/${MODULE_ID}/icons/svg/curtain-closed.svg`;
 export const CURTAIN_OPEN_ICON_PATH = `modules/${MODULE_ID}/icons/svg/curtain-opened.svg`;

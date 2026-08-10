@@ -1,5 +1,5 @@
-import { MODULE_ID, UPPER_MODULE_ID } from "src/ts/constants";
-import { OutdoorLightStatus, OutdoorSceneFlagNames } from "src/ts/data/scene_ext";
+import { MODULE_ID, UPPER_MODULE_ID } from "../../constants";
+import { OutdoorLightStatus, OutdoorSceneFlagNames } from "../../data/scene_ext";
 
 /**
  * Name of the change light status tool.

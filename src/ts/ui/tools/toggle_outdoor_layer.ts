@@ -1,9 +1,9 @@
 import { HookDefinitions } from "fvtt-hook-attacher";
 import type { LibWrapperBaseCallback, LibWrapperBaseCallbackArgs, LibWrapperWrapperDefinitions } from "fvtt-lib-wrapper-types";
-import applyDefaultOutdoorLightSettings from "src/ts/apps/apply_default_outdoor_light_settings";
-import { MODULE_ID, UPPER_MODULE_ID } from "src/ts/constants";
-import { AmbientLightDocumentProxy, AmbientLightDocWithParent } from "src/ts/proxies/ambient_light_proxy";
-import { outdoorLightSettings } from "src/ts/settings";
+import applyDefaultOutdoorLightSettings from "../../apps/apply_default_outdoor_light_settings";
+import { MODULE_ID, UPPER_MODULE_ID } from "../../constants";
+import { AmbientLightDocumentProxy, AmbientLightDocWithParent } from "../../proxies/ambient_light_proxy";
+import { outdoorLightSettings } from "../../settings";
 
 
 /**
