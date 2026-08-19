@@ -7,15 +7,15 @@
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "build": "vite build --mode development",
-    "watch": "vite build --watch"
+    "build": "vite build --mode ${BUILD_MODE:-production}",
+    "watch": "vite build --watch --mode ${BUILD_MODE:-development}"
   },
   "devDependencies": {
     "@babel/core": "^8.0.1",
     "@babel/eslint-parser": "^8.0.1",
     "@babel/preset-typescript": "^8.0.1",
     "@eslint/js": "^9.33.0",
-    "@league-of-foundry-developers/foundry-vtt-types": "github:League-of-Foundry-Developers/foundry-vtt-types#18cf35ee2b3079e40fa55490acfbaeb449003d89",
+    "@league-of-foundry-developers/foundry-vtt-types": "github:sylvercode/foundry-vtt-types#main",
     "@typescript-eslint/eslint-plugin": "^8.66.0",
     "@typescript-eslint/parser": "^8.66.0",
     "eslint": "^9.33.0",
@@ -26,7 +26,7 @@
     "vite-tsconfig-paths": "^6.1.1"
   },
   "allowScripts": {
-    "github:League-of-Foundry-Developers/foundry-vtt-types#18cf35ee2b3079e40fa55490acfbaeb449003d89": true,
+    "github:sylvercode/foundry-vtt-types#main": true,
     "@parcel/watcher@2.5.1": true
   }
 }
