@@ -135,7 +135,7 @@ export class OutdoorSceneFlagsDataModel extends foundry.abstract.DataModel<Outdo
 
 function updateScene(
     scene: Scene,
-    change: Scene & Scene.UpdateData, // Suspect error in Scene.UpdateData and must add Scene
+    change: Scene.UpdateData,
     _options: Scene.Database.OnUpdateOptions,
     _userId: string,
 ): void {
@@ -234,7 +234,7 @@ export const HOOKS_DEFINITIONS: Iterable<HookDefinitions> = [{
         },
         {
             name: "updateScene",
-            callback: updateScene as any// see definition of updateScene for the reason of using any
+            callback: updateScene
         }
     ]
 }];
