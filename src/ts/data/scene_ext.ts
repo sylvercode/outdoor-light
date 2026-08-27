@@ -3,7 +3,7 @@ import type { HookDefinitions } from "fvtt-hook-attacher";
 import { DataSchema } from "fvtt-types/src/foundry/common/data/fields.mjs";
 import { OutdoorLightFlagsDataModel } from "./ambient_light_ext";
 import applyDefaultOutdoorLightSettings, { Options as ApplyOptions } from "../apps/apply_default_outdoor_light_settings";
-import { AmbientLightDocumentProxy, AmbientLightDocWithParent } from "../proxies/ambient_light_proxy";
+import { AmbientLightDocumentProxy } from "../proxies/ambient_light_proxy";
 import { EnumField, EnumFieldOptions } from "fvtt-hook-attacher/utils/enum_field";
 
 /**
@@ -156,7 +156,7 @@ function updateScene(
         if (!lightOutdoorFlag.isOutdoor && !lightOutdoorFlag.emissionWallId)
             return;
 
-        const ambientLightProxy = new AmbientLightDocumentUpdateDataProxy(light as AmbientLightDocWithParent);
+        const ambientLightProxy = new AmbientLightDocumentUpdateDataProxy(light);
         applyDefaultOutdoorLightSettings(ambientLightProxy, applyOptions);
 
         light.update(ambientLightProxy.GetUpdateData());
@@ -170,7 +170,7 @@ class AmbientLightDocumentUpdateDataProxy extends AmbientLightDocumentProxy {
     private updateData: AmbientLightDocument.CreateData = {};
 
     constructor(
-        lightDoc: AmbientLightDocument & { parent: Scene }
+        lightDoc: AmbientLightDocument
     ) {
         super(lightDoc);
     }

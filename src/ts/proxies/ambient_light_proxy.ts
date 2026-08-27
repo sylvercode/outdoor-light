@@ -46,20 +46,19 @@ export type AmbientLightProxy = {
 };
 
 /**
- * Type alias for AmbientLightDocument with a guaranteed non-null parent Scene.
- */
-export type AmbientLightDocWithParent = AmbientLightDocument & { parent: NonNullable<AmbientLightDocument["parent"]> };
-/**
  * Proxy for AmbientLightDocument to implement the AmbientLightProxy interface.
  */
 export class AmbientLightDocumentProxy implements AmbientLightProxy {
-    constructor(protected lightDoc: AmbientLightDocWithParent) { }
+    constructor(
+        protected lightDoc: Pick<AmbientLightDocument, "parent" | "config" | "hidden" | "flags">,
+        protected parent: Scene = lightDoc.parent ?? (() => { throw new Error("AmbientLightDocumentProxy requires a parent Scene"); })()
+    ) { }
 
     /**
      * @inheritdoc
      */
     getScene(): Scene {
-        return this.lightDoc.parent;
+        return this.parent;
     }
 
     /**

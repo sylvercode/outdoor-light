@@ -2,7 +2,7 @@ import { HookDefinitions } from "fvtt-hook-attacher";
 import type { LibWrapperBaseCallback, LibWrapperBaseCallbackArgs, LibWrapperWrapperDefinitions } from "fvtt-lib-wrapper-types";
 import applyDefaultOutdoorLightSettings from "../../apps/apply_default_outdoor_light_settings";
 import { MODULE_ID, UPPER_MODULE_ID } from "../../constants";
-import { AmbientLightDocumentProxy, AmbientLightDocWithParent } from "../../proxies/ambient_light_proxy";
+import { AmbientLightDocumentProxy } from "../../proxies/ambient_light_proxy";
 import { outdoorLightSettings } from "../../settings";
 
 
@@ -77,13 +77,15 @@ function LightingLayer_onDragLeftDrop(event: Canvas.Event.Pointer<AmbientLight>)
     if (!isOutdoorLayerActive())
         return;
 
-    const outdoorFlags = lightDoc.flags[MODULE_ID] ??= {};
+    // Foundry uses the _source to create the document, so we need to set the flag there.
+    const srcDoc = lightDoc?._source ?? lightDoc;
+    const outdoorFlags = srcDoc.flags[MODULE_ID] ??= {};
     outdoorFlags.isOutdoor = true;
 
     if (!lightDoc.parent)
         throw new Error("Light document should have a parent at this point");
 
-    const ambientLightProxy = new AmbientLightDocumentProxy(lightDoc as AmbientLightDocWithParent);
+    const ambientLightProxy = new AmbientLightDocumentProxy(srcDoc, lightDoc.parent);
     applyDefaultOutdoorLightSettings(ambientLightProxy);
 }
 
@@ -95,7 +97,7 @@ function isOutdoorLayerActive(): boolean {
     if (lightControls?.name !== LIGHTING_LAYER_NAME)
         return false;
 
-    return lightControls.tools[TOGGLE_OUTDOOR_LAYER_TOOL_NAME].active ?? false;
+    return lightControls.tools?.[TOGGLE_OUTDOOR_LAYER_TOOL_NAME]?.active ?? false;
 }
 
 /**

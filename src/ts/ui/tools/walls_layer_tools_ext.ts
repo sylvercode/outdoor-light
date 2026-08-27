@@ -77,6 +77,9 @@ function getSceneControlButtons(controls: Record<string, SceneControls.Control>)
         return;
 
     const wallTools = controls[WALLS_LAYER_NAME].tools;
+    if (!wallTools)
+        throw new Error("Wall tools not found in scene controls");
+
     const getNextOrder = getToolOrderInsertionSequence(wallTools, YELLOW_TOOL_NAMES);
 
     wallTools[TOGGLE_OUTDOOR_WALLS_TOOL_NAME] = {
@@ -112,8 +115,8 @@ function WallsLayer_onDragLeftDrop(event: Canvas.Event.Pointer<Wall>): void {
     if (wallControls?.name !== WALLS_LAYER_NAME)
         return;
 
-    const toggleOutdoorWallsTool = wallControls.tools[TOGGLE_OUTDOOR_WALLS_TOOL_NAME].active ?? false;
-    const toggleCurtainTool = wallControls.tools[TOGGLE_CURTAIN_TOOL_NAME].active ?? false;
+    const toggleOutdoorWallsTool = wallControls.tools?.[TOGGLE_OUTDOOR_WALLS_TOOL_NAME]?.active ?? false;
+    const toggleCurtainTool = wallControls.tools?.[TOGGLE_CURTAIN_TOOL_NAME]?.active ?? false;
     if (!toggleOutdoorWallsTool && !toggleCurtainTool)
         return;
 
@@ -123,8 +126,8 @@ function WallsLayer_onDragLeftDrop(event: Canvas.Event.Pointer<Wall>): void {
     if (toggleOutdoorWallsTool) {
         outdoorFlags.isBlockingOutdoorLight = true;
         const enabledLight = wallDoc.door !== CONST.WALL_DOOR_TYPES.NONE
-            || wallDoc.light == CONST.WALL_SENSE_TYPES.NONE
-            || wallDoc.light == CONST.WALL_SENSE_TYPES.PROXIMITY;
+            || wallDoc.light == CONST.EDGE_SENSE_TYPES.NONE
+            || wallDoc.light == CONST.EDGE_SENSE_TYPES.PROXIMITY;
         if (enabledLight)
             outdoorFlags.lightEmission = { enabled: true };
     }
