@@ -7,6 +7,7 @@ import * as OutdoorLightFlagsDataModel from "./data/ambient_light_ext";
 import * as OutdoorWallFlagsDataModel from "./data/wall_ext";
 import * as OutdoorSceneFlagsDataModel from "./data/scene_ext";
 import * as ClockwiseSweepPolygonPatch from "./apps/clockwise_sweep_polygon_ext";
+import * as AmbientLightTabExt from "./apps/ambient_light_tab_ext";
 import * as CanvasEdgesExt from "./apps/canvas_edges_ext";
 import * as LightingLayerTools from "./ui/tools/lighting_layer_tools_ext";
 import * as ToggleOutdoorLayer from "./ui/tools/toggle_outdoor_layer";
@@ -48,7 +49,8 @@ export class OutdoorLightModuleHooks {
     ...WallsLayerTools.LIBWRAPPER_PATCHES,
     ...ToggleOutdoorLayer.LIBWRAPPER_PATCHES,
     ...DoorControl.LIBWRAPPER_PATCHES,
-    ...CanvasEdgesExt.LIBWRAPPER_PATCHES
+    ...CanvasEdgesExt.LIBWRAPPER_PATCHES,
+    ...AmbientLightTabExt.LIBWRAPPER_PATCHES
   ];
 
   /**
@@ -63,6 +65,6 @@ export class OutdoorLightModuleHooks {
     ...OutdoorSceneFlagsDataModel.HOOKS_DEFINITIONS,
     ...WallsLayerTools.HOOKS_DEFINITIONS,
     ...LightingLayerTools.HOOKS_DEFINITIONS,
-    ...ToggleOutdoorLayer.HOOKS_DEFINITIONS
+    ...AmbientLightTabExt.HOOKS_DEFINITIONS
   ]
 }

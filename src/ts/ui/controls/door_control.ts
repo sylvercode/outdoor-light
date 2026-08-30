@@ -35,8 +35,8 @@ function getCurtainTexture(dc: DoorControl): loadTexture.Return | null {
     if (wallDoc.door === CONST.WALL_DOOR_TYPES.NONE)
         return null;
 
-    if (wallDoc.light !== CONST.WALL_SENSE_TYPES.NONE &&
-        wallDoc.light !== CONST.WALL_SENSE_TYPES.PROXIMITY)
+    if (wallDoc.light !== CONST.EDGE_SENSE_TYPES.NONE &&
+        wallDoc.light !== CONST.EDGE_SENSE_TYPES.PROXIMITY)
         return null;
 
     const texturePath = (() => {

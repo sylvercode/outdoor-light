@@ -1,10 +1,8 @@
-import { HookDefinitions } from "fvtt-hook-attacher";
 import type { LibWrapperBaseCallback, LibWrapperBaseCallbackArgs, LibWrapperWrapperDefinitions } from "fvtt-lib-wrapper-types";
 import applyDefaultOutdoorLightSettings from "../../apps/apply_default_outdoor_light_settings";
 import { MODULE_ID, UPPER_MODULE_ID } from "../../constants";
 import { AmbientLightDocumentProxy } from "../../proxies/ambient_light_proxy";
 import { outdoorLightSettings } from "../../settings";
-
 
 /**
  * Name of the new tool to be added.ggit push
@@ -41,22 +39,10 @@ export default function getToggleOutdoorLayer(order: number): SceneControls.Tool
  * @param _active Whether the tool is now active.
  */
 async function onChangeToggleOutdoorLayer(_event: Event, _active: boolean) {
-    const lightLayer = game.canvas?.getLayerByEmbeddedName("AmbientLight");
-    if (!lightLayer)
-        return;
-
-    lightLayer.placeables.forEach(refreshAmbientLightControlIconVisibility);
-}
-
-/**
- * Refreshes the visibility of the control icon for an ambient light based on its outdoor status and the tool state.
- * @param light The ambient light to refresh.
- */
-function refreshAmbientLightControlIconVisibility(light: AmbientLight): void {
-    const isOutdoor = light.document.flags[MODULE_ID]?.isOutdoor ?? false;
-    const controlIcon = light.controlIcon;
-    if (controlIcon)
-        controlIcon.visible = isOutdoor === isOutdoorLayerActive();
+    const curTab = ui.placeables?.tab
+    const curTabId = curTab?.id ?? null;
+    if (curTab && curTabId === 'lights-tab')
+        curTab._applyFilters();
 }
 
 /**
@@ -99,16 +85,6 @@ function isOutdoorLayerActive(): boolean {
 
     return lightControls.tools?.[TOGGLE_OUTDOOR_LAYER_TOOL_NAME]?.active ?? false;
 }
-
-/**
- * Iterable of hook definitions for tools addition.
- */
-export const HOOKS_DEFINITIONS: Iterable<HookDefinitions> = [{
-    on: [{
-        name: "refreshAmbientLight",
-        callback: refreshAmbientLightControlIconVisibility,
-    }]
-}];
 
 /**
  * Iterable of wrapper patch definitions for tools behavior injection.
