@@ -25,7 +25,10 @@ async function renderSceneConfig(
     _application: SceneConfig,
     element: HTMLElement,
     context: ApplicationV2.RenderContextOf<SceneConfig>,
-    _options: ApplicationV2.RenderOptionsOf<SceneConfig>) {
+    options: ApplicationV2.RenderOptionsOf<SceneConfig>) {
+
+    if (!options.isFirstRender)
+        return;
 
     const content = element.querySelector(".window-content");
     if (!content) {

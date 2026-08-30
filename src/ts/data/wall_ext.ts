@@ -187,7 +187,6 @@ async function updateWall(
 
 function updatePerception() {
     game.canvas?.perception.update({
-        refreshEdges: true,         // Recompute edge intersections
         initializeLighting: true,   // Recompute light sources
         initializeVision: true,     // Recompute vision sources
         initializeSounds: true      // Recompute sound sources

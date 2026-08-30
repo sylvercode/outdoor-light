@@ -32,6 +32,8 @@ const EXTRA_TOOL_NAMES = ["day", "night", "reset", "clear"];
 function getSceneControlButtons(controls: Record<string, SceneControls.Control>): void {
 
     const lightTools = controls[LIGHTING_LAYER_NAME].tools;
+    if (!lightTools)
+        throw new Error("Lighting tools not found in scene controls");
 
     const getNextOrder = getToolOrderInsertionSequence(lightTools, EXTRA_TOOL_NAMES);
 

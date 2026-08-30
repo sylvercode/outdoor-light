@@ -45,14 +45,48 @@ export type AmbientLightProxy = {
     getEmissionWallId(): string | null;
 };
 
+type AmbientLightConfigLike = Pick<
+    AmbientLightDocument.Implementation["config"],
+    "bright" | "dim" | "luminosity" | "attenuation"
+> & {
+    darkness: Pick<
+        AmbientLightDocument.Implementation["config"]["darkness"],
+        "max"
+    >;
+};
+
+type AmbientLightDocumentLike = Pick<
+    AmbientLightDocument.Implementation,
+    "hidden" | "flags"
+> & {
+    config: AmbientLightConfigLike;
+    parent?: Scene | null;
+};
+
 /**
  * Proxy for AmbientLightDocument to implement the AmbientLightProxy interface.
  */
 export class AmbientLightDocumentProxy implements AmbientLightProxy {
+    protected lightDoc: AmbientLightDocumentLike;
+    protected parent: Scene;
+
     constructor(
-        protected lightDoc: Pick<AmbientLightDocument, "parent" | "config" | "hidden" | "flags">,
-        protected parent: Scene = lightDoc.parent ?? (() => { throw new Error("AmbientLightDocumentProxy requires a parent Scene"); })()
-    ) { }
+        lightDoc: AmbientLightDocumentLike & { parent: Scene }
+    );
+    constructor(
+        lightDoc: AmbientLightDocumentLike,
+        parent: Scene
+    );
+    constructor(
+        lightDoc: AmbientLightDocumentLike
+    );
+    constructor(
+        lightDoc: AmbientLightDocumentLike,
+        parent?: Scene
+    ) {
+        this.lightDoc = lightDoc;
+        this.parent = parent ?? lightDoc.parent ?? (() => { throw new Error("AmbientLightDocumentProxy requires a parent Scene"); })();
+    }
 
     /**
      * @inheritdoc

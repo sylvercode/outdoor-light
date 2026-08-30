@@ -210,7 +210,17 @@ export namespace EdgePatcher {
      * @returns An object containing the wall document and its outdoor flags, or null if not applicable
      */
     function getWallDoc(edge: Edge): WallDocument | null {
-        const doc = edge.object?.document;
+        const doc = (() => {
+            const source = edge.object;
+            if (!source)
+                return null;
+
+            if ("document" in source)
+                return source.document;
+            if ("documentName" in source)
+                return source;
+            return null;
+        })();
         if (!(doc instanceof WallDocument))
             return null;
 
