@@ -39,6 +39,16 @@ export type AmbientLightProxy = {
      */
     setAttenuation(attenuation: number): void;
 
+    /*
+     * Gets the levels of the light (aka keys of AmbientLightDocument.levels Set).
+     */
+    getLevels(): string[];
+
+    /**
+     * Sets the levels of the light (aka keys of AmbientLightDocument.levels Set).
+     */
+    setLevels(levels: string[]): void;
+
     /**
      * Get emission wall id.
      */
@@ -46,18 +56,18 @@ export type AmbientLightProxy = {
 };
 
 type AmbientLightConfigLike = Pick<
-    AmbientLightDocument.Implementation["config"],
+    AmbientLightDocument.Source["config"],
     "bright" | "dim" | "luminosity" | "attenuation"
 > & {
     darkness: Pick<
-        AmbientLightDocument.Implementation["config"]["darkness"],
+        AmbientLightDocument.Source["config"]["darkness"],
         "max"
     >;
 };
 
 type AmbientLightDocumentLike = Pick<
-    AmbientLightDocument.Implementation,
-    "hidden" | "flags"
+    AmbientLightDocument.Source,
+    "hidden" | "flags" | "levels"
 > & {
     config: AmbientLightConfigLike;
     parent?: Scene | null;
@@ -143,6 +153,14 @@ export class AmbientLightDocumentProxy implements AmbientLightProxy {
      */
     setAttenuation(attenuation: number) {
         this.lightDoc.config.attenuation = attenuation;
+    }
+
+
+    getLevels(): string[] {
+        return this.lightDoc.levels;
+    }
+    setLevels(levels: string[]): void {
+        this.lightDoc.levels = levels;
     }
 
     /**

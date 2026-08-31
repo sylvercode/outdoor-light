@@ -54,8 +54,3 @@ function renderPlaceableTab(): void {
     _matchesFilter_Wrapper_Active = true;
     ui.placeables?.tab?._applyFilters();
 }
-
-/* function applyAmbiantLightTabFilter(): void {
-    console.log("applyAmbiantLightTabFilter");
-    //game.canvas.getLayerByEmbeddedName('AmbientLight')
-} */

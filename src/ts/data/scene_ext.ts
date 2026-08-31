@@ -172,7 +172,7 @@ class AmbientLightDocumentUpdateDataProxy extends AmbientLightDocumentProxy {
     constructor(
         lightDoc: AmbientLightDocument
     ) {
-        super(lightDoc);
+        super(lightDoc._source);
     }
 
     GetUpdateData(): AmbientLightDocument.UpdateData {

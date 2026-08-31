@@ -37,6 +37,7 @@ export default async function updateWallLightEmission(wall: WallDocument): Promi
     const lightData: AmbientLightUpdateDataWithEmissionWallId = {
         x: center.x,
         y: center.y,
+        levels: wall.levels,
         config: {
             angle: 360
         },
@@ -81,6 +82,14 @@ type AmbientLightUpdateDataWithEmissionWallId =
     AmbientLightDocument.CreateData &
     { flags: { [MODULE_ID]: { [OutdoorLightFlagName.emissionWallId]: string } } };
 
+
+
+type _Pretty<T> =
+    T extends infer O ? { [K in keyof O]: O[K] } : never;
+
+type _Expanded = _Pretty<AmbientLightUpdateDataWithEmissionWallId>;
+
+
 class AmbientLightUpdateData implements AmbientLightProxy {
     constructor(private data: AmbientLightUpdateDataWithEmissionWallId,
         private Scene: Scene
@@ -118,6 +127,29 @@ class AmbientLightUpdateData implements AmbientLightProxy {
     setAttenuation(attenuation: number): void {
         const config = this.data.config ??= {};
         config.attenuation = attenuation;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    getLevels(): string[] {
+        const r = this.data.levels as Set<string> | undefined;
+        return Array.from(r ?? []);
+    }
+    /**
+     * @inheritdoc
+     */
+    setLevels(levels: string[]): void {
+        const levelsSet = this.data.levels as Set<string> | undefined
+        if (!levelsSet) {
+            this.data.levels = new Set(levels);
+        }
+        else {
+            levelsSet.clear();
+            for (const level of levels) {
+                levelsSet.add(level);
+            }
+        }
     }
 
     getEmissionWallId(): string | null {

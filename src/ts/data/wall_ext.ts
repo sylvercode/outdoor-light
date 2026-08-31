@@ -169,7 +169,7 @@ async function updateWall(
         if (!enabled)
             return false;
 
-        return change.c !== undefined || change.door !== undefined || change.ds !== undefined;
+        return change.c !== undefined || change.door !== undefined || change.ds !== undefined || change.levels !== undefined;
     })();
     if (mustUpdateLightEmission) {
         const lightId = await updateWallLightEmission(document);

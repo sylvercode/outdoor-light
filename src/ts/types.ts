@@ -15,6 +15,21 @@ import * as WallsLayerTools from "./ui/tools/walls_layer_tools_ext";
 import * as DoorControl from "./ui/controls/door_control";
 import * as settings from "./settings";
 
+/*
+ * extends AmbientLightDocument and WallDocument with levels property (string Set)
+ */
+declare global {
+  /*
+  interface AmbientLightDocument {
+    levels: Set<string>;
+  }
+  interface WallDocument {
+    levels: Set<string>;
+  }
+  */
+}
+
+
 /**
  * Interface for the Outdoor Light module, extending Foundry's Module interface.
  */

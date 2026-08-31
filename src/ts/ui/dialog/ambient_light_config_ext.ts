@@ -190,6 +190,21 @@ class AmbientLightAppConfigProxy implements AmbientLightProxy {
     /**
      * @inheritdoc
      */
+    getLevels(): string[] {
+        return Array.from(
+            this.content.querySelectorAll('multi-select[name="levels"] .tag').values())
+            .map(d => d.attributes.getNamedItem("data-key")!.value);
+    }
+    /**
+     * Not implemented in this proxy, as the AmbientLightConfig UI does not provide a direct way to set levels programmatically.
+     * @inheritdoc
+     */
+    setLevels(_levels: string[]): void {
+        throw new Error("Method not implemented.");
+    }
+    /**
+     * @inheritdoc
+     */
     getEmissionWallId(): string | null {
         return this.emissionWallId;
     }

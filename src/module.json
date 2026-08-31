@@ -2,14 +2,14 @@
   "id": "outdoor-light",
   "title": "Outdoor Light",
   "description": "Add outdoor lights and walls to Foundry VTT.",
-  "version": "0.0.1",
+  "version": "1.2.0",
   "packs": [],
   "system": [],
   "dependencies": [],
   "scripts": [],
   "compatibility": {
     "minimum": "13",
-    "verified": "13"
+    "verified": "14.367"
   },
   "authors": [
     {
