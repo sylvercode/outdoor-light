@@ -1,6 +1,6 @@
 {
   "name": "outdoor-light",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Add outdoor lights and walls to Foundry VTT.",
   "license": "MIT",
   "type": "module",
